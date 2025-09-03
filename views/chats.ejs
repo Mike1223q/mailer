@@ -1,0 +1,51 @@
+<%- include('header-mathes.ejs') %>
+<body>
+
+    <!-- Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Banner for Incomplete Profile -->
+    <div id="complete-profile-banner" class="d-none">
+        <div class="banner-content">
+            <h2>Complete Your Profile</h2>
+            <p>You need to complete your own profile before you can discover others.</p>
+            <a href="/profile-settings" class="btn-complete-profile">
+                Go to Profile Settings <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="chats-container">
+        <div class="chats-panel">
+            <h2>Your Conversations</h2>
+            
+            <div class="chats-header">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-chats" placeholder="Search conversations..." class="search-input">
+                </div>
+                <button class="btn-refresh-chats" id="btn-refresh-chats" title="Refresh conversations">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            <div class="chats-list" id="chats-list">
+                <!-- Chat items will be loaded here -->
+                <div class="loading-chats">
+                    <div class="loading-spinner"></div>
+                    <p>Loading your conversations...</p>
+                </div>
+            </div>
+
+            <div class="no-chats" id="no-chats" style="display: none;">
+                <div class="no-chats-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>No Conversations Yet</h3>
+                <p>Start connecting with people to see your conversations here.</p>
+                <a href="/dashboard" class="btn-start-chat">Browse Profiles</a>
+            </div>
+        </div>
+    </div>
+
+<%- include('footer-mathes.ejs') %>

@@ -1,0 +1,274 @@
+<%- include('header-mathes.ejs') %>
+<body>
+
+    <!-- Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Banner for Incomplete Profile -->
+    <div id="complete-profile-banner" class="d-none">
+        <div class="banner-content">
+            <h2>Complete Your Profile</h2>
+            <p>You need to complete your own profile before you can access the marketplace.</p>
+            <a href="/profile-settings" class="btn-complete-profile">
+                Go to Profile Settings <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="marketplace-container">
+        <div class="marketplace-panel">
+            <div class="marketplace-header">
+                <h1>Marketplace</h1>
+                <p>Get coins and premium features</p>
+            </div>
+
+            <!-- Current Balance -->
+            <div class="current-balance">
+                <div class="balance-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="balance-info">
+                    <h3>Your Current Balance</h3>
+                    <div class="balance-amount" id="current-balance">Loading...</div>
+                    <div class="balance-amount" id="current-letter-credits">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Coin Packages -->
+            <div class="packages-section">
+                <h2>💎 Coin Packages</h2>
+                <div class="packages-grid">
+                    <!-- Free Package -->
+                    <div class="package-card free-package">
+                        <div class="package-header">
+                            <div class="package-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <h3>Free Coins</h3>
+                            <div class="package-price">FREE</div>
+                        </div>
+                        <div class="package-content">
+                            <div class="coin-amount">100 Coins</div>
+                            <p>Watch ad to earn</p>
+                            <button class="btn-watch-ad" id="btn-watch-ad">
+                                <i class="fas fa-play"></i> Watch Ad
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Basic Package -->
+                    <div class="package-card basic-package">
+                        <div class="package-header">
+                            <div class="package-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3>Starter Pack</h3>
+                            <div class="package-price">$0.99</div>
+                        </div>
+                        <div class="package-content">
+                            <div class="coin-amount">250 Coins</div>
+                            <p>Great starter value</p>
+                            <button class="btn-buy-package" data-package="basic" data-amount="250" data-price="0.99">
+                                <i class="fas fa-shopping-cart"></i> Buy Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Popular Package -->
+                    <div class="package-card popular-package">
+                        <div class="package-badge">Most Popular</div>
+                        <div class="package-header">
+                            <div class="package-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <h3>Popular Pack</h3>
+                            <div class="package-price">$2.49</div>
+                        </div>
+                        <div class="package-content">
+                            <div class="coin-amount">750 Coins</div>
+                            <p>Best value</p>
+                            <button class="btn-buy-package" data-package="popular" data-amount="750" data-price="2.49">
+                                <i class="fas fa-shopping-cart"></i> Buy Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Premium Package -->
+                    <div class="package-card premium-package">
+                        <div class="package-header">
+                            <div class="package-icon">
+                                <i class="fas fa-gem"></i>
+                            </div>
+                            <h3>Premium Pack</h3>
+                            <div class="package-price">$4.99</div>
+                        </div>
+                        <div class="package-content">
+                            <div class="coin-amount">1,500 Coins</div>
+                            <p>Maximum value</p>
+                            <button class="btn-buy-package" data-package="premium" data-amount="1500" data-price="4.99">
+                                <i class="fas fa-shopping-cart"></i> Buy Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mega Package -->
+                    <div class="package-card mega-package">
+                        <div class="package-header">
+                            <div class="package-icon">
+                                <i class="fas fa-diamond"></i>
+                            </div>
+                            <h3>Mega Pack</h3>
+                            <div class="package-price">$9.99</div>
+                        </div>
+                        <div class="package-content">
+                            <div class="coin-amount">3,500 Coins</div>
+                            <p>Ultimate value</p>
+                            <button class="btn-buy-package" data-package="mega" data-amount="3500" data-price="9.99">
+                                <i class="fas fa-shopping-cart"></i> Buy Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Letter Credits Package -->
+                    <div class="package-card letter-credits-package">
+                        <div class="package-header">
+                            <div class="package-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3>Letter Credit</h3>
+                            <div class="package-price" id="letter-credits-price">$2.99</div>
+                            <div class="package-badge" id="premium-discount-badge" style="display: none;">20% OFF</div>
+                        </div>
+                        <div class="package-content">
+                            <div class="coin-amount">1 Credit</div>
+                            <p>Send physical letter</p>
+                            <div class="credits-info">
+                                <i class="fas fa-question-circle" id="credits-info-icon"></i>
+                                <div class="credits-tooltip" id="credits-tooltip">
+                                    Letter credits allow you to send physical letters to other users. Each credit = 1 letter.
+                                </div>
+                            </div>
+                            <button class="btn-buy-package" data-package="letter-credits" data-amount="1" data-price="2.99" data-credits="true">
+                                <i class="fas fa-shopping-cart"></i> Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Subscription -->
+            <div class="premium-section">
+                <div class="premium-card">
+                    <!-- Non-Premium Content -->
+                    <div id="non-premium-content">
+                        <div class="premium-header">
+                            <div class="premium-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <h2>Premium Membership</h2>
+                            <div class="premium-options">
+                                <div class="premium-option" data-plan="monthly">
+                                    <div class="option-price">$6.99</div>
+                                    <div class="option-period">month</div>
+                                </div>
+                                <div class="premium-option" data-plan="half-year">
+                                    <div class="option-price">$29.99</div>
+                                    <div class="option-period">6 months</div>
+                                    <div class="option-savings">Save 28%</div>
+                                </div>
+                                <div class="premium-option selected" data-plan="yearly">
+                                    <div class="option-price">$39.99</div>
+                                    <div class="option-period">year</div>
+                                    <div class="option-savings">Save 52%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="premium-features">
+                            <h3>Premium Benefits:</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> 70+ new matches every week</li>
+                                <li><i class="fas fa-check"></i> 1000 coins free every month</li>
+                                <li><i class="fas fa-check"></i> 20% off letter credits</li>
+                                <li><i class="fas fa-check"></i> Premium avatar skins</li>
+                                <li><i class="fas fa-check"></i> Premium stamps</li>
+                                <li><i class="fas fa-check"></i> Boost delivery time</li>
+                                <li><i class="fas fa-check"></i> Edit e-letters before delivery</li>
+                            </ul>
+                        </div>
+                        <button class="btn-become-premium" id="btn-become-premium" data-plan="yearly">
+                            <i class="fas fa-crown"></i> Get Premium Yearly
+                        </button>
+                    </div>
+
+                    <!-- Premium Content -->
+                    <div id="premium-content" style="display: none;">
+                        <div class="premium-header">
+                            <div class="premium-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <h2>Premium Membership Active</h2>
+                                                    <div class="current-plan-info">
+                            <div class="plan-type" id="current-plan-type">Monthly Plan</div>
+                            <div class="plan-dates" id="current-plan-dates">Next billing: Loading...</div>
+                        </div>
+                        </div>
+                        <div class="premium-features">
+                            <h3>Your Premium Benefits:</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> 70+ new matches every week</li>
+                                <li><i class="fas fa-check"></i> 1000 coins free every month</li>
+                                <li><i class="fas fa-check"></i> 20% off letter credits</li>
+                                <li><i class="fas fa-check"></i> Premium avatar skins</li>
+                                <li><i class="fas fa-check"></i> Premium stamps</li>
+                                <li><i class="fas fa-check"></i> Boost delivery time</li>
+                                <li><i class="fas fa-check"></i> Edit e-letters before delivery</li>
+                            </ul>
+                        </div>
+                        <div class="premium-actions">
+                            <button class="btn-manage-subscription" id="btn-manage-subscription">
+                                <i class="fas fa-cog"></i> Manage My Subscription
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscription Management Modal -->
+            <div id="subscription-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Manage Subscription</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="current-subscription">
+                            <h4>Current Plan: <span id="modal-current-plan">Loading...</span></h4>
+                            <p>Next billing: <span id="modal-next-billing">Loading...</span></p>
+                        </div>
+                        
+                        <div class="upgrade-options">
+                            <h4>Upgrade Options:</h4>
+                            <div id="upgrade-buttons">
+                                <!-- Upgrade buttons will be dynamically added here -->
+                            </div>
+                        </div>
+                        
+                        <div class="cancel-section">
+                            <h4>Cancel Subscription</h4>
+                            <p>Your premium features will remain active until the end of your current billing period.</p>
+                            <button class="btn-cancel-subscription" id="btn-cancel-subscription">
+                                <i class="fas fa-times"></i> Cancel Subscription
+                            </button>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button class="btn-close-modal" id="btn-close-modal">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('footer-mathes.ejs') %>

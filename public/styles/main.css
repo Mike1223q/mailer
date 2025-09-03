@@ -1,0 +1,368 @@
+body {
+    background-color: #f8f9fa;
+}
+
+:root {
+    --bs-primary: #2dbef7;          /* Primary color */
+    --bs-primary-rgb: 135, 206, 235; /* RGB version needed for some utilities */
+  
+    --bs-link-color: #2dbef7;
+    --bs-link-hover-color: #5ea6d0;
+  
+    --bs-btn-hover-bg: #5ea6d0;
+    --bs-btn-active-bg: #4a8bc4;
+    --bs-btn-border-color: #2dbef7;
+    
+    /* Optional: Adjust focus ring color */
+    --bs-focus-ring-color: rgba(135, 206, 235, 0.5);
+  }
+  
+.btn-primary {
+background-color: #2dbef7 !important;
+border-color: #2dbef7 !important;
+}
+
+.btn-outline-primary {
+border-color: #2dbef7 !important;
+color: #2dbef7 !important;
+}
+
+.btn-outline-primary:hover {
+background-color: #2dbef7 !important;
+color: #fff !important;
+border-color: #2dbef7 !important;
+}
+
+.btn-primary:hover {
+background-color: #49a5da !important;
+border-color: #5ea6d0 !important;
+}
+.btn-primary:focus {
+background-color: #2dbef7 !important;
+border-color: #2dbef7 !important;
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    height: 100%; /* or whatever height */
+    padding-top: 5rem; /* optional padding */
+  }
+  
+  
+  #bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    color: white; /* or whatever */
+  }
+  
+
+.custom-rounded {
+    border-radius: 1.5rem !important; /* or 20px or whatever you like */
+  }
+
+  header {
+    position: fixed;     /* fixes the header at the top */
+    top: 0;              /* position at the very top */
+    left: 0;
+    right: 0;
+    z-index: 1030;       /* higher than other elements, Bootstrap's navbar uses 1030 */
+    
+    background: rgba(135, 206, 235, 0.3);
+    backdrop-filter: blur(6px);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .nav-link {
+    color: white !important;
+  }
+  
+  .nav-link:hover {
+    color: #ffd700 !important;
+    text-decoration: underline;
+  }
+
+.what-we-offer h1 {
+    color: #333!important; /* Darker text for contrast */
+}
+  
+.custom-top {
+    margin-top: 5rem; /* Adjust as needed */
+    margin-bottom: 2rem; /* Adjust as needed */
+}
+
+
+.blank-space {
+    height: 600px; /* Adjust height as needed */
+
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+.custom-img-futures {
+    height: 500px;
+    width: 350px;
+    max-width: 400px; /* Adjust as needed */
+    margin-bottom: 1rem; /* Space below the image */
+    border-radius: 0.5rem; /* Optional: rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+  }
+
+.blue-bg {
+    background-color: #2dbef770 !important;
+    color: white !important;
+    width: 100vw;
+     
+}
+.blue-bg h1 {
+    color: white !important;
+}
+
+.blue-bg p {
+    color: white !important;
+}   
+
+.step-title {
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: white;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border-radius: 2rem;
+    min-width: 100px;
+    max-width: 200px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+  }
+  
+.step-text h2 {
+font-size: 1.5rem;
+margin-bottom: 0.5rem;
+}
+
+.step-text p {
+font-size: 1rem;
+color: #555;
+}
+
+.custom-img-steps {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 200px; /* Adjust height as needed */
+    width: 500px; /* Full width */ 
+}
+
+.blue-bg {
+    background-color: #90cdfd; /* softer blue */
+    color: #fff;
+  }
+  
+.step-box {
+background: rgba(255, 255, 255, 0.15);
+border-radius: 20px;
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+cursor: default;
+}
+
+.step-box:hover {
+transform: translateY(-8px);
+box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.step-title {
+font-weight: 700;
+font-size: 1.2rem;
+}
+
+.step-text {
+font-weight: 400;
+font-size: 0.95rem;
+margin-top: 1rem;
+line-height: 1.5;
+color: #f0f0f0;
+}
+
+.step-icon {
+font-size: 2.5rem;
+}
+
+h1.custom-top {
+font-weight: 700;
+font-size: 2.5rem;
+color: #fff;
+}
+
+.pricing-card {
+    background: #ffffff; /* solid white */
+    border: 1px solid rgba(0, 0, 0, 0.05); /* subtle border */
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+  
+  .pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pricing-badge {
+    color: #555;
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+  
+  .best-value.badge {
+    border-radius: 999px;
+    padding: 0.4rem 0.75rem;
+    background-color: #007bff; /* match your brand primary */
+  }
+  
+  .text-dark-75 {
+    color: rgba(0, 0, 0, 0.75) !important;
+  }
+  
+  .price {
+    color: #222;
+  }
+  
+  .feature-list .feature-item {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: rgba(0, 0, 0, 0.7);
+  }
+  
+  .feature-list .feature-item::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #007bff; /* primary checkmark */
+    font-weight: 700;
+  }
+/* Force all pricing section text to go dark */
+.pricing {
+    color: #222; /* default text color */
+  }
+  
+  .pricing h1,
+  .pricing h2,
+  .pricing h3,
+  .pricing .price,
+  .pricing .pricing-badge,
+  .pricing .feature-list,
+  .pricing .feature-item,
+  .pricing .step-title,
+  .pricing .step-text {
+    color: #222 !important; /* override any .text-white classes */
+  }
+  
+  /* Adjust muted/secondary tones */
+  .pricing .text-white,
+  .pricing .text-white-75,
+  .pricing .text-white-50 {
+    color: rgba(0, 0, 0, 0.75) !important;
+  }
+
+  .btn-outline-soft {
+    color: #555;
+    border: 1px solid #ccc;
+    background-color: transparent;
+  }
+  
+  .btn-outline-soft:hover {
+    background-color: #f1f1f1;
+    color: #222;
+  }
+
+  .blue-bg {
+    background-color: #004080; /* deep blue, adjust as needed */
+  }
+  
+  .text-accent {
+    color: #7ee0ff; /* brand accent blue */
+  }
+  
+  .why-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .why-list li {
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+  }
+
+  .custom-img-about {
+    height: 700px; /* Adjust height as needed */
+    width: auto; /* Full width */
+  }
+  
+  .why-us {
+    margin-top: 7rem;
+  }
+
+  .blue-bg {
+    background-color: #004080; /* deep blue */
+    color: #1a1a1a; /* rich charcoal for body text */
+  }
+  
+  .footer-link {
+    color: #0d0d0d; /* dark tone for contrast */
+    text-decoration: none;
+  }
+  
+  .footer-link:hover {
+    text-decoration: underline;
+  }
+  
+  .footer-social .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0d0d0d;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    padding: 0.25rem;
+    border-radius: 50%;
+  }
+  
+  .footer-social .social-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .site-footer {
+    color: #0d0d0d!important; /* Ensure footer text is dark */
+  }
+
+  .footer-sep {
+    border-top: 1px solid rgba(240, 234, 234, 0.849)!important; /* Subtle separator */
+    margin: 2rem 0;
+  }
+  

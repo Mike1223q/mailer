@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://accounts.google.com https://apis.google.com 'unsafe-inline';
+    connect-src 'self' https://www.googleapis.com https://oauth2.googleapis.com https://accounts.google.com;
+    frame-src https://accounts.google.com;
+    style-src 'self' 'unsafe-inline' https://accounts.google.com;
+    img-src 'self' data:;">
+    <style>
+        /* General Styles */
+        body {
+            background-color: hsl(0, 0%, 96%);
+            font-family: Arial, sans-serif;
+        }
+
+        /* Gradient Background */
+        .gradient-custom {
+            background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+            overflow: hidden;
+        }
+
+        /* Card Animation */
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-body {
+            animation: fadeSlideUp 1s ease forwards;
+        }
+
+        /* Form Styles */
+        .form-outline {
+            position: relative;
+        }
+
+        .form-outline input {
+            width: 100%;
+            padding: 16px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .form-outline label {
+            position: absolute;
+            left: 12px;
+            top: 16px;
+            color: #999;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-outline input:focus + label,
+        .form-outline input.filled + label {
+            top: -8px;
+            left: 8px;
+            font-size: 12px;
+            color: #06b6d4;
+            background: white;
+            padding: 0 4px;
+        }
+
+        .form-control:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 8px rgba(106, 17, 203, 0.7);
+            transition: 0.3s ease;
+        }
+
+        /* Button Styles */
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            transition: 0.3s ease;
+        }
+
+        /* Google Button */
+        .google-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: black;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .google-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Section: Design Block -->
+    <section class="sign-up">
+        <div class="px-4 py-5 px-md-5 text-center text-lg-start">
+            <div class="container">
+                <div class="row gx-lg-5 align-items-center">
+                    <!-- Left Column -->
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <h1 class="my-5 display-3 fw-bold ls-tight">
+                            The best offer <br />
+                            <span class="text-primary">for your business</span>
+                        </h1>
+                        <p style="color: hsl(217, 10%, 50.8%)">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                            Eveniet, itaque accusantium odio, soluta, corrupti aliquam
+                            quibusdam tempora at cupiditate quis eum maiores libero
+                            veritatis? Dicta facilis sint aliquid ipsum atque?
+                        </p>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <div class="card">
+                            <div class="card-body py-5 px-md-5">
+                                <form action="/register" method="POST">
+                                    <!-- Name Inputs -->
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input type="text" id="firstName" name="firstName" class="form-control" required />
+                                                <label class="form-label" for="firstName">First name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-outline">
+                                                <input type="text" id="lastName" name="lastName" class="form-control" required />
+                                                <label class="form-label" for="lastName">Last name</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Email Input -->
+                                    <div class="form-outline mb-4">
+                                        <input type="email" name="email" id="email" class="form-control" required />
+                                        <label class="form-label" for="email">Email address</label>
+                                    </div>
+
+                                    <!-- Password Input -->
+                                    <div class="form-outline mb-4">
+                                        <input type="password" name="password" id="password" class="form-control" required />
+                                        <label class="form-label" for="password">Password</label>
+                                    </div>
+
+                                    <!-- Terms & Privacy Checkbox -->
+                                    <div class="form-check d-flex justify-content-center mb-4">
+                                        <input class="form-check-input me-2" type="checkbox" id="terms" name="terms" required />
+                                        <label class="form-check-label" for="terms">
+                                            I agree to the 
+                                            <a href="/privacy.html" target="_blank">Privacy Policy</a> 
+                                            and 
+                                            <a href="/terms.html" target="_blank">Terms of Service</a>.
+                                        </label>
+                                    </div>
+
+                                    <!-- Newsletter Checkbox -->
+                                    <div class="form-check d-flex justify-content-center mb-4">
+                                        <input class="form-check-input me-2" type="checkbox" id="newsletter" name="newsletter" checked />
+                                        <label class="form-check-label" for="newsletter">
+                                            Subscribe to our newsletter
+                                        </label>
+                                    </div>
+
+                                    <!-- Submit Buttons -->
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <button type="submit" class="btn btn-primary">
+                                            Sign Up
+                                        </button>
+                                        <button type="button" class="btn btn-light" onclick="window.location.href='/login-page'">
+                                            Log In
+                                        </button>
+                                    </div>
+
+                                    <!-- Google Sign-Up -->
+                                    <div class="text-center">
+                                        <p>or sign up with:</p>
+                                        <div class="google-btn-wrapper">
+                                            <div id="g_id_onload"
+                                                data-client_id="409368143445-v7ukcrsjh9lc9vj2h1t70ufg1fa4ej1v.apps.googleusercontent.com"
+                                                data-context="signup"
+                                                data-ux_mode="popup"
+                                                data-callback="handleCredentialResponse"
+                                                data-auto_prompt="false">
+                                            </div>
+                                            <div class="g_id_signin"
+                                                data-type="standard"
+                                                data-shape="rectangular"
+                                                data-theme="outline"
+                                                data-text="signup_with"
+                                                data-size="large"
+                                                data-logo_alignment="left">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section: Design Block -->
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        document.querySelectorAll('.form-outline input').forEach(input => {
+            const label = input.nextElementSibling;
+
+            // Initial state
+            if (input.value) input.classList.add('filled');
+
+            input.addEventListener('input', () => {
+                if (input.value) {
+                    input.classList.add('filled');
+                } else {
+                    input.classList.remove('filled');
+                }
+            });
+        });
+
+        const registerForm = document.querySelector('form[action="/register"]');
+
+registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Remove previous invalid styles & messages
+    registerForm.querySelectorAll('.form-control').forEach(field => {
+        field.classList.remove('is-invalid');
+        const feedback = field.parentElement.querySelector('.invalid-feedback');
+        if (feedback) feedback.remove();
+    });
+
+    const firstName = registerForm.firstName.value.trim();
+    const lastName = registerForm.lastName.value.trim();
+    const email = registerForm.email.value.trim();
+    const password = registerForm.password.value;
+
+    let hasError = false;
+
+    // Check required fields
+    if (!firstName) showError(registerForm.firstName, "First name is required");
+    if (!lastName) showError(registerForm.lastName, "Last name is required");
+    if (!email) showError(registerForm.email, "Email is required");
+    if (!password) showError(registerForm.password, "Password is required");
+
+    // Check password length
+    if (password && password.length < 8) {
+        showError(registerForm.password, "Password must be at least 8 characters long");
+        hasError = true;
+    }
+
+    if (hasError) return;
+
+    // If all checks pass, submit form via fetch
+    try {
+        const res = await fetch(registerForm.action, {
+            method: registerForm.method,
+            credentials: "include",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                firstName,
+                lastName,
+                email,
+                password,
+                newsletter: registerForm.newsletter.checked
+            })
+        });
+
+        const text = await res.text();
+
+        if (!res.ok) {
+            // Example: show server-side errors
+            showError(registerForm.email, text);
+            return;
+        }
+        registerForm.reset();
+        // Redirect to login page or dashboard
+        window.location.href = '/login-page';
+
+    } catch (err) {
+        console.error("Error submitting form:", err);
+    }
+});
+
+// Helper to show inline error
+function showError(field, message) {
+    field.classList.add('is-invalid');
+    const feedback = document.createElement('div');
+    feedback.className = 'invalid-feedback';
+    feedback.innerText = message;
+    field.parentElement.appendChild(feedback);
+}
+
+function handleCredentialResponse(response) {
+    console.log("ID token:", response.credential);
+
+    fetch("/auth/google", {
+        method: "POST",
+        credentials: "include", // ensures session cookies are sent
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: response.credential })
+    })
+    .then(res => {
+        if (res.ok) {
+            // Redirect to home page if login successful
+            window.location.href = "/";
+        } else {
+            // Parse server response to get error message
+            return res.json().then(data => {
+                console.error("Server error:", data);
+                alert(data.error || "Login failed");
+            });
+        }
+    })
+    .catch(err => console.error("Fetch error:", err));
+}
+
+
+        // Initialize Google Sign-In
+        window.onload = () => {
+            google.accounts.id.initialize({
+                client_id: "409368143445-v7ukcrsjh9lc9vj2h1t70ufg1fa4ej1v.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+        };
+    </script>
+</body>
+</html>

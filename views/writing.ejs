@@ -1,0 +1,55 @@
+<%- include('header-mathes.ejs') %>
+<body>
+
+    <!-- Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Banner for Incomplete Profile -->
+    <div id="complete-profile-banner" class="d-none">
+        <div class="banner-content">
+            <h2>Complete Your Profile</h2>
+            <p>You need to complete your own profile before you can discover others.</p>
+            <a href="/profile-settings" class="btn-complete-profile">
+                Go to Profile Settings <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="writing-container">
+        <div class="writing-panel">
+            <h2>Write a Letter</h2>
+            <p class="recipient-info">To: <span id="recipient-name">Bella</span></p>
+
+            <textarea id="letter-body" placeholder="Start writing your letter here..."></textarea>
+
+            <!-- SafeSend Toggle -->
+            <div class="safesend-toggle">
+                <label class="safesend-label">
+                    <input type="checkbox" id="safesend-toggle" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-text">SafeSend</span>
+                    <i class="fas fa-question-circle safesend-info" title="SafeSend filters inappropriate content. You can disable it for yourself, but recipients can still enforce it on messages sent to them."></i>
+                </label>
+                <div class="safesend-description">
+                    <small>Content safety filter. You can disable it for yourself, but other users can still enforce it on messages sent to them.</small>
+                </div>
+            </div>
+
+            <div class="suggestions-panel">
+                <h5>Need help starting? Try one of these:</h5>
+                <div class="suggestions-list">
+                    <button class="suggestion-btn">I saw on your profile that you're interested in...</button>
+                    <button class="suggestion-btn">Hey! I was really impressed by...</button>
+                    <button class="suggestion-btn">Your profile caught my eye, especially the part about...</button>
+                    <button class="suggestion-btn">Hi, my name is [Your Name]. I wanted to reach out because...</button>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="#" class="btn-cancel">Cancel</a>
+                <button class="btn-save" id="save-btn">Save <i class="fas fa-save"></i></button>
+                <button class="btn-send" id="send-btn">Send Letter <i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+<%- include('footer-mathes.ejs') %>

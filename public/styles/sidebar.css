@@ -1,0 +1,157 @@
+/* Import a modern, clean font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+/* Define colors and animations at the root for easy changes */
+:root {
+    --glow-color-1: #00aaff;
+    --glow-color-2: #ff00aa;
+    --background-color: #0d0c1d;
+    --surface-color: rgba(20, 18, 41, 0.7);
+    --font-color: #e0e0ff;
+    --subtle-font-color: #a0a0c0;
+}
+
+/* --- Glassmorphism Sidebar --- */
+#sidebar {
+    background: var(--surface-color);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    width: 90px;
+    transition: width 0.3s ease, padding 0.3s ease;
+    padding: 1rem 0.75rem;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+#sidebar:hover { width: 260px; }
+
+/* Sidebar User Profile Section */
+.sidebar-user-profile {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+}
+
+#sidebar-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--glow-color-1);
+    flex-shrink: 0;
+    /* FIX: Center the avatar within its container by default */
+    margin-left: auto;
+    margin-right: auto;
+    transition: margin 0.3s ease;
+}
+#sidebar:hover #sidebar-avatar {
+    /* FIX: Align the avatar to the left when the sidebar is expanded */
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#sidebar-name {
+    margin-left: 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    opacity: 0;
+    transition: opacity 0.2s ease, margin-left 0.3s ease;
+    color: var(--font-color) !important;
+}
+#sidebar:hover #sidebar-name {
+    opacity: 1;
+    margin-left: 1rem;
+    transition-delay: 0.1s;
+}
+
+/* Premium name gradient styling */
+.premium-name-gradient {
+    background: linear-gradient(45deg, var(--glow-color-1), var(--glow-color-2), var(--glow-color-1));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: premium-glow 3s ease-in-out infinite;
+    text-shadow: none;
+}
+
+@keyframes premium-glow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Premium badge styling removed - now using elegant gradient text instead */
+
+/* Override link styling for sidebar name to prevent blue color */
+.sidebar-user-profile a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.sidebar-user-profile a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+#sidebar .nav-link { color: var(--subtle-font-color); border-radius: 10px; padding: 0.75rem 1rem; white-space: nowrap; overflow: hidden; justify-content: center; transition: all 0.2s ease; }
+#sidebar .nav-link:hover { background: rgba(255, 255, 255, 0.05); color: #fff; text-shadow: 0 0 8px var(--glow-color-1); }
+#sidebar .nav-link span { opacity: 0; visibility: hidden; transition: opacity 0.2s ease; }
+#sidebar:hover .nav-link span { opacity: 1; visibility: visible; transition-delay: 0.15s; }
+
+/* Notification badge styles */
+.notification-badge {
+    background: linear-gradient(45deg, var(--glow-color-2), #ff4757);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 0.2rem 0.5rem;
+    border-radius: 50px;
+    min-width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+    animation: pulse-notification 2s infinite;
+}
+
+@keyframes pulse-notification {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+    }
+    50% { 
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(255, 71, 87, 0.8);
+    }
+}
+
+/* Hide notification badge when sidebar is collapsed */
+#sidebar .notification-badge {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    margin-left: 0.5rem;
+    min-width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+}
+
+/* Show notification badge when sidebar is expanded */
+#sidebar:hover .notification-badge {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition-delay: 0.15s;
+}

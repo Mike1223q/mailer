@@ -1,0 +1,276 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* Gradient Background */
+        .gradient-custom {
+          background: #6a11cb;
+          background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+          background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+          overflow: hidden;
+        }
+
+        @keyframes fadeSlideUp {
+          0% { opacity: 0; transform: translateY(50px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-body {
+          animation: fadeSlideUp 1s ease forwards;
+        }
+
+        .form-outline {
+          position: relative;
+        }
+
+        .form-outline input {
+          width: 100%;
+          padding: 16px 12px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          outline: none;
+        }
+
+        .form-outline label {
+          position: absolute;
+          left: 12px;
+          top: 16px;
+          color: #999;
+          font-size: 16px;
+          pointer-events: none;
+          transition: all 0.3s ease;
+        }
+
+        .form-outline input:focus + label,
+        .form-outline input.filled + label {
+          top: -8px;
+          left: 8px;
+          font-size: 12px;
+          color: #06b6d4;
+          background: white;
+          padding: 0 4px;
+        }
+
+        .form-control:focus {
+          border-color: #6a11cb;
+          box-shadow: 0 0 8px rgba(106, 17, 203, 0.7);
+          transition: 0.3s ease;
+        }
+
+        .btn-outline-light:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+          transform: scale(1.05);
+          transition: 0.3s ease;
+        }
+
+        p.mb-0 a {
+          position: relative;
+          display: inline-block;
+          overflow: hidden;
+        }
+
+        p.mb-0 a::after {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 2px;
+          background: #fff;
+          left: -100%;
+          bottom: 0;
+          transition: 0.3s ease;
+        }
+
+        p.mb-0 a:hover::after {
+          left: 0;
+        }
+
+        .google-btn-wrapper {
+          display: flex;
+          justify-content: center;
+          margin-top: 16px;
+        }
+
+        .google-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          padding: 16px 24px;
+          font-size: 16px;
+          font-weight: 600;
+          color: black;
+          background: rgba(255, 255, 255, 0.9);
+          border: 1px solid rgba(0,0,0,0.1);
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .google-btn:hover {
+          background: rgba(255, 255, 255, 1);
+          transform: translateY(-2px);
+        }
+    </style>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body style="background-color: hsl(0, 0%, 96%)">
+
+    <section class="login">
+        <div class="px-4 py-5 px-md-5 text-center text-lg-start">
+          <div class="container">
+            <div class="row gx-lg-5 align-items-center justify-content-center">
+              <div class="col-lg-5 mb-5 mb-lg-0">
+                <div class="card">
+                  <div class="card-body py-5 px-md-5">
+                    <h2 class="mb-4 text-center">Login</h2>
+                    <form action="/login" method="POST">
+                      <!-- Email -->
+                      <div class="form-outline mb-4">
+                        <input type="email" name="email" id="email" class="form-control" required/>
+                        <label class="form-label" for="email">Email address</label>
+                      </div>
+      
+                      <!-- Password -->
+                      <div class="form-outline mb-2">
+                        <input type="password" name="password" id="password" class="form-control" required/>
+                        <label class="form-label" for="password">Password</label>
+                      </div>
+      
+                      <!-- Forgot password -->
+                      <div class="text-end mb-4">
+                        <a href="/forgot" class="link-secondary" aria-label="Forgot password">Forgot password?</a>
+                      </div>
+      
+                      <div class="d-flex justify-content-between mb-4">
+                        <button type="submit" class="btn btn-primary">Log In</button>
+                        <button type="button" class="btn btn-light" onclick="window.location.href='/register-page'">Sign Up</button>
+                      </div>
+      
+                      <div class="text-center">
+                        <p>or sign up with:</p>
+                        <div class="google-btn-wrapper">
+                          <div id="g_id_onload"
+                            data-client_id="409368143445-v7ukcrsjh9lc9vj2h1t70ufg1fa4ej1v.apps.googleusercontent.com"
+                            data-context="signup"
+                            data-ux_mode="popup"
+                            data-callback="handleCredentialResponse"
+                            data-auto_prompt="false">
+                          </div>
+                          <div class="g_id_signin"
+                            data-type="standard"
+                            data-shape="rectangular"
+                            data-theme="outline"
+                            data-text="signup_with"
+                            data-size="large"
+                            data-logo_alignment="left">
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+    document.querySelectorAll('.form-outline input').forEach(input => {
+        if(input.value) input.classList.add('filled');
+        input.addEventListener('input', () => {
+            if(input.value) input.classList.add('filled');
+            else input.classList.remove('filled');
+        });
+    });
+    
+    document.querySelector('form').addEventListener('submit', async function(e){
+        e.preventDefault();
+        const form = e.target;
+        const emailField = form.email;
+        const passwordField = form.password;
+    
+        // Remove previous invalid styles & messages
+        [emailField, passwordField].forEach(field => {
+            field.classList.remove('is-invalid');
+            const feedback = field.parentElement.querySelector('.invalid-feedback');
+            if (feedback) feedback.remove();
+        });
+    
+        const data = {
+            email: emailField.value,
+            password: passwordField.value
+        };
+    
+        try {
+            const res = await fetch(form.action, {
+                method: form.method,
+                credentials: "include",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+    
+            if (res.status === 401) {
+                // Add red border
+                emailField.classList.add('is-invalid');
+                passwordField.classList.add('is-invalid');
+    
+                // Add red error text under email field
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'invalid-feedback';
+                errorMsg.innerText = 'Invalid email or password';
+                emailField.parentElement.appendChild(errorMsg);
+                return;
+            }
+    
+            if (res.ok) {
+                form.reset();
+                // Redirect to dashboard
+                window.location.href = '/';
+            }
+        } catch (err) {
+            console.error('Error:', err);
+        }
+    });
+    function handleCredentialResponse(response) {
+        console.log("ID token:", response.credential);
+
+        fetch("/auth/google", {
+            method: "POST",
+            credentials: "include", // send cookies/session
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: response.credential })
+        })
+        .then(res => {
+            if (res.ok) {
+                // Redirect to home page if login successful
+                window.location.href = "/";
+            } else {
+                // Handle errors
+                return res.json().then(data => {
+                    console.error("Server error:", data);
+                    alert(data.error || "Login failed");
+                });
+            }
+        })
+        .catch(err => console.error("Fetch error:", err));
+    }
+
+        // Initialize Google Sign-In
+        window.onload = () => {
+            google.accounts.id.initialize({
+                client_id: "409368143445-v7ukcrsjh9lc9vj2h1t70ufg1fa4ej1v.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+        };
+    </script>
+    
+
+</body>
+</html>

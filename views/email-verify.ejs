@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Import a modern, clean font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        /* Define colors and animations at the root for easy changes */
+        :root {
+            --glow-color-1: #00aaff;
+            --glow-color-2: #ff00aa;
+            --background-color: #0d0c1d;
+            --surface-color: rgba(20, 18, 41, 0.7);
+            --font-color: #e0e0ff;
+            --subtle-font-color: #a0a0c0;
+            --error-color: #ff4d4d;
+        }
+
+        /* Keyframes for the animated background gradient */
+        @keyframes aurora-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- General Body & Animated Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            background: linear-gradient(-45deg, #0d0c1d, #1a183d, #2a286b, #1a183d);
+            background-size: 400% 400%;
+            animation: aurora-bg 15s ease infinite;
+            color: var(--font-color);
+            overflow-x: hidden;
+        }
+        
+        /* --- Glassmorphism Sidebar --- */
+        #sidebar {
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            width: 90px;
+            transition: width 0.3s ease;
+            padding: 1rem;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        #sidebar:hover { width: 260px; }
+        #sidebar .nav-link { color: var(--subtle-font-color); border-radius: 10px; padding: 0.75rem 1rem; white-space: nowrap; overflow: hidden; justify-content: center; transition: all 0.2s ease; }
+        #sidebar .nav-link:hover { background: rgba(255, 255, 255, 0.05); color: #fff; text-shadow: 0 0 8px var(--glow-color-1); }
+        #sidebar .nav-link span, .sidebar-header .sidebar-title { opacity: 0; visibility: hidden; transition: opacity 0.2s ease; }
+        #sidebar:hover .nav-link span, #sidebar:hover .sidebar-title { opacity: 1; visibility: visible; transition-delay: 0.15s; }
+
+        /* --- Main Content Area --- */
+        #main-content {
+            margin-left: 90px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        #sidebar:hover ~ #main-content { margin-left: 260px; }
+
+        /* --- Glassmorphism Verification Panel --- */
+        .verify-panel {
+            width: 100%;
+            max-width: 500px;
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .verify-panel h2 {
+            text-shadow: 0 0 8px var(--glow-color-1);
+            margin-bottom: 1rem;
+        }
+        .verify-panel p {
+            color: var(--subtle-font-color);
+            margin-bottom: 2rem;
+        }
+
+        /* --- Form Styles --- */
+        .form-control {
+            background: rgba(0,0,0,0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: var(--font-color) !important;
+            font-size: 1.5rem;
+            text-align: center;
+            letter-spacing: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .form-control:focus {
+            background: rgba(0,0,0,0.3);
+            outline: none;
+            box-shadow: 0 0 15px var(--glow-color-1);
+            border-color: var(--glow-color-1);
+        }
+
+        /* --- Submit Button --- */
+        .btn-submit {
+            width: 100%;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            background-color: var(--glow-color-2);
+            color: #fff;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            box-shadow: 0 0 20px var(--glow-color-2);
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 30px var(--glow-color-2);
+        }
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: wait;
+            transform: none; /* Disable hover effects when disabled */
+        }
+
+        /* --- Toast Notification for Errors --- */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface-color);
+            backdrop-filter: blur(10px);
+            color: var(--font-color);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--glow-color-2);
+            box-shadow: 0 0 20px var(--glow-color-2);
+            z-index: 9999;
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div class="sidebar-header"><h5 class="sidebar-title">Menu</h5></div>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-th-large fa-fw me-3"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="/profile-settings"><i class="fas fa-cog fa-fw me-3"></i><span>Settings</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-gem fa-fw me-3"></i><span>Subscriptions</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-wallet fa-fw me-3"></i><span>Balance</span></a></li>
+        </ul>
+    </div>
+
+    <div id="main-content">
+        <div class="verify-panel">
+            <h2>Check Your Email</h2>
+            <p>We've sent a 6-digit verification code to your email address. Please enter it below to continue.</p>
+            
+            <div id="lockout-message" style="color: var(--error-color); margin-bottom: 1.5rem; font-weight: 500;"></div>
+
+            <form id="verify-form" method="POST" action="/verify-email/check">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="code-input" maxlength="6" placeholder="------">
+                </div>
+                <button type="submit" class="btn-submit">Verify Email</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const verifyForm = document.getElementById('verify-form');
+            const codeInput = document.getElementById('code-input');
+            const submitButton = document.querySelector('.btn-submit');
+            // ADDED: Get reference to the new message element
+            const lockoutMessage = document.getElementById('lockout-message');
+
+            // --- Reusable function for toast messages ---
+            const showToast = (message) => {
+                const toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.addEventListener('transitionend', () => toast.remove());
+                }, 3000);
+            };
+
+            verifyForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const code = codeInput.value.trim();
+
+                if (code.length !== 6 || !/^\d+$/.test(code)) {
+                    showToast('Please enter a valid 6-digit code.');
+                    return;
+                }
+
+                submitButton.disabled = true;
+                submitButton.textContent = 'Verifying...';
+                lockoutMessage.textContent = ''; // Clear previous messages
+
+                let responseStatus = 0; // Variable to hold the response status
+
+                try {
+                    const res = await fetch('/verify-email/check', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code })
+                    });
+                    
+                    responseStatus = res.status; // Store the status code
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        showToast('Email verified successfully! Redirecting...');
+                        setTimeout(() => {
+                            window.location.href = '/profile-settings';
+                        }, 1500);
+                    } else {
+                        // MODIFIED: Check for the specific lockout status
+                        if (responseStatus === 429) {
+                            // This is a lockout, so show a persistent message
+                            lockoutMessage.textContent = data.error;
+                            submitButton.textContent = 'Verify Email';
+                            // Keep the form disabled by not re-enabling it in 'finally'
+                            codeInput.disabled = true; 
+                        } else {
+                            // For other errors (e.g., wrong code), show a temporary toast
+                            showToast(data.error || 'An unknown error occurred.');
+                        }
+                    }
+                } catch (err) {
+                    alert(err);
+                    console.error("Verification error:", err);
+                    showToast("Could not connect to the server.");
+                } finally {
+                    // MODIFIED: Only re-enable the button if not locked out
+                    if (responseStatus !== 429) {
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Verify Email';
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

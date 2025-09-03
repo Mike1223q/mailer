@@ -1,0 +1,24 @@
+<%- include('header-mathes.ejs') %>
+<%- include('partials/sidebar.ejs') %>
+
+    <!-- Banner for Incomplete Profile -->
+    <div id="complete-profile-banner" class="d-none">
+        <div class="banner-content">
+            <h2>Complete Your Profile</h2>
+            <p>You need to complete your own profile before you can discover others.</p>
+            <a href="/profile-settings" class="btn-complete-profile">
+                Go to Profile Settings <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content (Profile Browser) -->
+    <div id="main-content">
+        <div class="card-container" id="card-container">
+            <!-- The dynamic profile card will be inserted here by JS -->
+            <div class="card-nav" id="nav-back"><div class="card-nav-icon"><i class="fas fa-chevron-left"></i></div></div>
+            <div class="card-nav" id="nav-next"><div class="card-nav-icon"><i class="fas fa-chevron-right"></i></div></div>
+        </div>
+    </div>
+
+<%- include('footer-mathes.ejs') %>

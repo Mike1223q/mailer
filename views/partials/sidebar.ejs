@@ -1,0 +1,24 @@
+<!-- Sidebar -->
+<div id="sidebar">
+    <!-- User Profile Section -->
+    <a href="/profile-settings" class="sidebar-user-profile">
+        <img src="https://placehold.co/60x60/FFFFFF/000000?text=User" alt="User Avatar" id="sidebar-avatar">
+        <div class="sidebar-user-info">
+            <h5 id="sidebar-name">User Name</h5>
+        </div>
+    </a>
+    
+    <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-th-large fa-fw me-3"></i><span>Dashboard</span></a></li>
+        <!-- NEW: Chats Link -->
+        <li class="nav-item">
+            <a class="nav-link" href="/chats">
+                <i class="fas fa-comment-dots fa-fw me-3"></i>
+                <span>Chats</span>
+                <span id="sidebar-notification-badge" class="notification-badge d-none">0</span>
+            </a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/profile-settings"><i class="fas fa-cog fa-fw me-3"></i><span>Settings</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/marketplace"><i class="fas fa-store fa-fw me-3"></i><span>Marketplace</span></a></li>
+    </ul>
+</div>

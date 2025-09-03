@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <!-- Bootstrap is still useful for the grid system -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Import a modern, clean font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        /* Define colors and animations at the root for easy changes */
+        :root {
+            --glow-color-1: #00aaff;
+            --glow-color-2: #ff00aa;
+            --background-color: #0d0c1d;
+            --surface-color: rgba(20, 18, 41, 0.7);
+            --font-color: #e0e0ff;
+            --subtle-font-color: #a0a0c0;
+        }
+
+        /* Keyframes for the animated background gradient */
+        @keyframes aurora-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- General Body & Animated Background --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            background: linear-gradient(-45deg, #0d0c1d, #1a183d, #2a286b, #1a183d);
+            background-size: 400% 400%;
+            animation: aurora-bg 15s ease infinite;
+            color: var(--font-color);
+            overflow-x: hidden;
+        }
+
+        /* --- Main Content Area --- */
+        #main-content {
+            /* Account for sidebar width */
+            margin-left: 90px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        /* Adjust main content when sidebar is hovered */
+        #sidebar:hover ~ #main-content {
+            margin-left: 260px;
+        }
+
+        /* --- Glassmorphism Settings Panel --- */
+        .settings-panel {
+            width: 100%;
+            max-width: 800px;
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            padding: 2.5rem;
+        }
+
+        .settings-panel h2 {
+            text-shadow: 0 0 8px var(--glow-color-1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* --- Avatar & Gender Section --- */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .avatar-container {
+            position: relative;
+            cursor: pointer;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--glow-color-1);
+            object-fit: cover;
+        }
+        .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .avatar-container:hover .avatar-overlay {
+            opacity: 1;
+        }
+        .gender-selection {
+            flex-grow: 1;
+        }
+        .gender-options {
+            display: flex;
+            gap: 1rem;
+        }
+        .gender-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .gender-option:hover {
+            border-color: var(--glow-color-1);
+        }
+        .gender-option.selected {
+            border-color: var(--glow-color-2);
+            box-shadow: 0 0 15px var(--glow-color-2);
+            color: var(--glow-color-2);
+        }
+        .gender-option i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Form Styles --- */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .form-label {
+            font-weight: 500;
+            color: var(--subtle-font-color);
+            margin-bottom: 0.5rem;
+        }
+        .form-control {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: var(--font-color) !important;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus {
+            background: rgba(0,0,0,0.3);
+            outline: none;
+            box-shadow: 0 0 15px var(--glow-color-1);
+            border-color: var(--glow-color-1);
+        }
+        .form-control.is-invalid {
+            border-color: var(--glow-color-2);
+            box-shadow: 0 0 15px var(--glow-color-2);
+        }
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .form-control:disabled {
+            background-color: rgba(0,0,0,0.4);
+            opacity: 0.5;
+        }
+        .form-text {
+            color: var(--subtle-font-color);
+            font-size: 0.85rem;
+            padding-left: 0.25rem;
+        }
+
+        /* --- Final, most forceful fix for autofill styles --- */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active,
+        textarea:-webkit-autofill,
+        textarea:-webkit-autofill:hover,
+        textarea:-webkit-autofill:focus,
+        textarea:-webkit-autofill:active  {
+            -webkit-text-fill-color: var(--font-color) !important;
+            box-shadow: 0 0 0 1000px rgba(0,0,0,0.2) inset !important;
+            transition: background-color 5000s ease-in-out 0s !important;
+        }
+
+
+        /* --- Email Verification --- */
+        .email-verification {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .verification-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .badge-verified {
+            background-color: rgba(0, 255, 135, 0.1);
+            color: #00ff87;
+        }
+        .badge-unverified {
+            background-color: rgba(255, 180, 0, 0.1);
+            color: #ffb400;
+        }
+        
+        .btn-verify {
+            background: rgba(0, 170, 255, 0.1);
+            border: 1px solid var(--glow-color-1);
+            color: var(--glow-color-1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .btn-verify:hover {
+            background: var(--glow-color-1);
+            color: var(--background-color);
+            box-shadow: 0 0 10px var(--glow-color-1);
+        }
+
+        /* --- Editable Interests --- */
+        .interests-editor .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            min-height: 50px;
+        }
+        .interest-tag-editable {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 170, 255, 0.1);
+            color: var(--glow-color-1);
+            border: 1px solid var(--glow-color-1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .interest-tag-editable:hover {
+            background: var(--glow-color-1);
+            color: var(--background-color);
+            box-shadow: 0 0 10px var(--glow-color-1);
+        }
+        .remove-tag-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            opacity: 0.7;
+            cursor: pointer;
+            padding: 0;
+        }
+        .remove-tag-btn:hover {
+            opacity: 1;
+        }
+        #add-interest-btn {
+            background: none;
+            border: 1px dashed var(--subtle-font-color);
+            color: var(--subtle-font-color);
+            border-radius: 20px;
+            padding: 0.25rem 1rem;
+            transition: all 0.2s ease;
+        }
+        #add-interest-btn:hover {
+            background: var(--glow-color-1);
+            border-color: var(--glow-color-1);
+            color: var(--background-color);
+        }
+
+        /* --- Address with Security Shield --- */
+        .address-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .security-shield {
+            position: relative;
+            cursor: pointer;
+            color: var(--subtle-font-color);
+        }
+        .security-tooltip {
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            background: var(--surface-color);
+            border: 1px solid var(--glow-color-1);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px var(--glow-color-1);
+            font-size: 0.9rem;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 10;
+        }
+        .security-shield:hover .security-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 5px;
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .suggestion-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            color: var(--subtle-font-color);
+        }
+        .suggestion-item:hover {
+            background: var(--glow-color-1);
+            color: var(--background-color);
+        }
+
+
+        /* --- Save Button --- */
+        .btn-save {
+            width: 100%;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            background-color: var(--glow-color-2);
+            color: #fff;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            box-shadow: 0 0 20px var(--glow-color-2);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        .btn-save:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 30px var(--glow-color-2);
+        }
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: wait;
+        }
+
+        /* --- Toast Notification for Errors --- */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface-color);
+            backdrop-filter: blur(10px);
+            color: var(--font-color);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--glow-color-2);
+            box-shadow: 0 0 20px var(--glow-color-2);
+            z-index: 9999;
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* --- Styles for Modals --- */
+        .modal-content {
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            color: var(--font-color);
+        }
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        .interests-list, .avatar-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        .interest-choice {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--subtle-font-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .interest-choice:hover {
+            background: var(--glow-color-1);
+            color: var(--background-color);
+            border-color: var(--glow-color-1);
+        }
+        .interest-choice.selected {
+            background: var(--glow-color-1);
+            color: var(--background-color);
+            border-color: var(--glow-color-1);
+            box-shadow: 0 0 10px var(--glow-color-1);
+        }
+        .avatar-choice {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .avatar-choice:hover {
+            transform: scale(1.05);
+            border-color: var(--glow-color-1);
+        }
+
+        a {
+            text-decoration: none;
+            color:aliceblue;
+        }
+        
+    </style>
+    <link rel="stylesheet" href="/styles/sidebar.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <div class="settings-panel">
+            <h2>Create Your Profile</h2>
+            <form id="profile-form" action="/saveProfile" method="POST">
+                
+                <div class="profile-header">
+                    <div class="avatar-container" id="avatar-container">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop" alt="Profile Avatar" class="profile-avatar" id="profile-avatar">
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="gender-selection">
+                        <label class="form-label">Gender</label>
+                        <div class="gender-options">
+                            <div class="gender-option" data-gender="female">
+                                <i class="fas fa-venus"></i>
+                                <div>Female</div>
+                            </div>
+                            <div class="gender-option" data-gender="male">
+                                <i class="fas fa-mars"></i>
+                                <div>Male</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" value="">
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" value="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="email-verification">
+                        <input type="email" class="form-control" id="email" value="" readonly>
+                        <span class="verification-badge badge-unverified" id="verification-badge">Not Verified</span>
+                        <button type="button" class="btn-verify" id="verify-btn">Verify Now</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bio" class="form-label">Bio</label>
+                    <textarea class="form-control" id="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+                </div>
+
+                <div class="form-group interests-editor">
+                    <label class="form-label">Interests</label>
+                    <div class="tags-container" id="tags-container">
+                        <!-- Tags will be added here by JS -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="address-header">
+                        <label for="address" class="form-label">Mailing Address</label>
+                        <div class="security-shield">
+                            <i class="fas fa-shield-alt"></i>
+                            <div class="security-tooltip">
+                                Your address is kept private and is only used for mailing purposes. It will never be shown to other users.
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text" class="form-control" id="address" placeholder="Start typing your address...">
+                    <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" role="switch" id="wants-mail-switch">
+                        <label class="form-check-label" for="wants-mail-switch">I want to receive physical letters</label>
+                    </div>
+                    <div class="form-text mt-2">
+                        Your profile will be reviewed within 24 hours before any changes become public.
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interests Modal -->
+    <div class="modal fade" id="interests-modal" tabindex="-1" aria-labelledby="interestsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="interestsModalLabel">Select Your Interests</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="interests-list" id="interests-list-modal"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="done-selecting-btn" class="btn btn-primary">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avatar Modal -->
+    <div class="modal fade" id="avatar-modal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="avatarModalLabel">Choose Your Avatar</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="avatar-list" id="avatar-list-modal"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // --- Global State ---
+            let userInterests = [];
+            let selectedGender = null;
+            let selectedAvatarUrl = 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop';
+            const ALL_INTERESTS = [
+                "🎵 Music", "⚽ Sports", "✈️ Travel", "🏋️ Fitness", "🎬 Movies", "📺 TV Shows",
+                "📖 Reading", "✍️ Writing", "🎨 Art", "📸 Photography", "👨‍🍳 Cooking", "🧁 Baking",
+                "🎮 Gaming", "💻 Technology", "💃 Dancing", "👗 Fashion", "🛍️ Shopping", "🍔 Food & Drink",
+                "🌳 Nature", "🐶 Animals", "🐾 Pets", "🧘 Meditation", "🧘‍♀️ Yoga", "✨ Spirituality",
+                "🔬 Science", "📜 History", "🌍 Languages", "🤝 Volunteering", "📱 Social Media", "🎙️ Podcasts",
+                "😂 Comedy", "🎭 Theatre", "🌄 Adventure", "🏕️ Outdoors", "🔥 Camping", "🥾 Hiking",
+                "🎣 Fishing", "🏊 Swimming", "🚴 Cycling", "🏃 Running", "🥋 Martial Arts", "🏋️‍♂️ Fitness Training",
+                "🚗 Cars", "🏍️ Motorcycles", "🛹 Skateboarding", "🏂 Snowboarding", "⛷️ Skiing", "🏄 Surfing",
+                "🧴 Skincare", "💄 Makeup", "📈 Self-Improvement", "💼 Business", "🚀 Entrepreneurship", "💰 Investing",
+                "🪙 Crypto", "🌐 Startup Culture", "👽 Science Fiction", "🐉 Fantasy", "🗾 Anime", "📚 Comics",
+                "🎮 Esports", "♟️ Board Games", "🧩 Puzzles", "✂️ Crafts", "🔨 DIY Projects", "🏡 Home Decor",
+                "🛋️ Interior Design", "🌱 Gardening", "🔭 Astronomy", "🌌 Astrology", "🗳️ Politics", "🌿 Environment",
+                "♻️ Sustainability", "❤️ Charity", "💎 Luxury Lifestyle", "📦 Minimalism", "🚙 Road Trips", "🏖️ Beach Life",
+                "🏙️ City Life", "🌃 Nightlife", "🍹 Bars & Clubs", "☕ Coffee Culture", "🍵 Tea Culture", "🍷 Wine Tasting",
+                "🍺 Beer Tasting", "🍸 Mixology", "📦 Collecting", "🖋️ Tattoo Art", "🖌️ Digital Art", "🎥 Film Making",
+                "🖼️ Photo Editing", "📝 Blogging", "📹 Vlogging", "📡 Streaming", "🕶️ VR & AR", "🤖 Robotics",
+                "🧠 AI & Machine Learning", "👨‍💻 Programming", "🛡️ Cybersecurity", "🖨️ 3D Printing", "🎓 Education",
+                "📚 Philosophy", "🧩 Psychology", "👶 Parenting", "👨‍👩‍👧 Family", "🐕 Pets & Animals", "🎎 Culture",
+                "🌐 Travel Blogging", "🏝️ Luxury Travel", "🧗 Adventure Travel", "🍽️ Foodie Life"
+            ];  
+            const MALE_AVATARS = ['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop', 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&auto=format&fit=crop', 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=200&auto=format&fit=crop'];
+            const FEMALE_AVATARS = ['https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop'];
+            let tempSelectedInterests = [];
+            let debounceTimer;
+
+            // --- Element References ---
+            const profileForm = document.getElementById('profile-form');
+            const tagsContainer = document.getElementById('tags-container');
+            const interestsModal = new bootstrap.Modal(document.getElementById('interests-modal'));
+            const avatarModal = new bootstrap.Modal(document.getElementById('avatar-modal'));
+            const interestsListModal = document.getElementById('interests-list-modal');
+            const avatarListModal = document.getElementById('avatar-list-modal');
+            const doneSelectingBtn = document.getElementById('done-selecting-btn');
+            const wantsMailSwitch = document.getElementById('wants-mail-switch');
+            const addressInput = document.getElementById('address');
+            const bioTextarea = document.getElementById('bio');
+            const nameInput = document.getElementById('name');
+            const saveButton = document.querySelector('.btn-save');
+            const verificationBadge = document.getElementById('verification-badge');
+            const verifyBtn = document.getElementById('verify-btn');
+            const avatarContainer = document.getElementById('avatar-container');
+            const profileAvatar = document.getElementById('profile-avatar');
+            const genderOptions = document.querySelectorAll('.gender-option');
+
+            // --- Reusable Functions ---
+            const showToast = (message) => {
+                const toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.addEventListener('transitionend', () => toast.remove());
+                }, 3000);
+            };
+
+            const renderTags = () => {
+                tagsContainer.innerHTML = '';
+                userInterests.forEach(interest => {
+                    const tagElement = document.createElement('span');
+                    tagElement.className = 'interest-tag-editable';
+                    tagElement.innerHTML = `${interest} <button type="button" class="remove-tag-btn" data-interest="${interest}">&times;</button>`;
+                    tagsContainer.appendChild(tagElement);
+                });
+                const addButton = document.createElement('button');
+                addButton.type = 'button';
+                addButton.id = 'add-interest-btn';
+                addButton.textContent = '+ Add';
+                addButton.addEventListener('click', openInterestsModal);
+                tagsContainer.appendChild(addButton);
+            };
+
+            const openInterestsModal = () => {
+                tempSelectedInterests = [];
+                interestsListModal.innerHTML = ''; 
+                const availableInterests = ALL_INTERESTS.filter(i => !userInterests.includes(i));
+                availableInterests.forEach(interest => {
+                    const choiceElement = document.createElement('button');
+                    choiceElement.type = 'button';
+                    choiceElement.className = 'interest-choice';
+                    choiceElement.textContent = interest;
+                    choiceElement.dataset.interest = interest;
+                    interestsListModal.appendChild(choiceElement);
+                });
+                interestsModal.show();
+            };
+
+            const toggleAddressField = () => {
+                addressInput.disabled = !wantsMailSwitch.checked;
+                if (!wantsMailSwitch.checked) {
+                    addressInput.value = '';
+                }
+            };
+            
+            const populateForm = (userData) => {
+                // NEW: Populate sidebar
+                document.getElementById('sidebar-avatar').src = userData.avatar || 'https://placehold.co/60x60/FFFFFF/000000?text=User';
+                document.getElementById('sidebar-name').textContent = userData.name || 'User';
+                
+                // Apply premium gradient to sidebar name if user has premium
+                const sidebarName = document.getElementById('sidebar-name');
+                if (sidebarName) {
+                    if (userData.premium) {
+                        sidebarName.classList.add('premium-name-gradient');
+                    } else {
+                        sidebarName.classList.remove('premium-name-gradient');
+                    }
+                }
+
+                nameInput.value = userData.name || '';
+                document.getElementById('dob').value = userData.dob || '';
+                document.getElementById('email').value = userData.email || '';
+                bioTextarea.value = userData.bio || '';
+                
+                if (typeof userData.interests === 'string') {
+                    try {
+                        userInterests = JSON.parse(userData.interests) || [];
+                    } catch (e) {
+                        console.error("Could not parse interests:", e);
+                        userInterests = [];
+                    }
+                } else {
+                    userInterests = userData.interests || [];
+                }
+                addressInput.value = userData.address || '';
+
+                wantsMailSwitch.checked = userData.wantsPhysicalMail;
+                
+                if (userData.email_verified) {
+                    verificationBadge.textContent = 'Verified';
+                    verificationBadge.classList.remove('badge-unverified');
+                    verificationBadge.classList.add('badge-verified');
+                    verifyBtn.style.display = 'none';
+                }
+                
+                selectedGender = userData.gender || null;
+                selectedAvatarUrl = userData.avatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop';
+                profileAvatar.src = selectedAvatarUrl;
+                genderOptions.forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.dataset.gender === selectedGender) {
+                        opt.classList.add('selected');
+                    }
+                });
+
+                renderTags();
+                toggleAddressField();
+            };
+
+            const openAvatarModal = () => {
+                if (!selectedGender) {
+                    showToast('Please select a gender first to see relevant avatars.');
+                    return;
+                }
+                avatarListModal.innerHTML = '';
+                const avatarList = selectedGender === 'male' ? MALE_AVATARS : FEMALE_AVATARS;
+                avatarList.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.className = 'avatar-choice';
+                    img.addEventListener('click', () => {
+                        selectedAvatarUrl = url;
+                        profileAvatar.src = url;
+                        avatarModal.hide();
+                    });
+                    avatarListModal.appendChild(img);
+                });
+                avatarModal.show();
+            };
+            
+            const getAddressSuggestions = async (input) => {
+                if (input.length < 3) {
+                    clearSuggestions();
+                    return;
+                }
+                try {
+                    const res = await fetch('/api/address-autocomplete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ input })
+                    });
+                    if (!res.ok) return;
+                    const suggestions = await res.json();
+                    displaySuggestions(suggestions);
+                } catch (err) {
+                    console.error("Address autocomplete error:", err);
+                }
+            };
+
+            const displaySuggestions = (suggestions) => {
+                clearSuggestions();
+                const suggestionsContainer = document.createElement('div');
+                suggestionsContainer.className = 'autocomplete-suggestions';
+                suggestions.forEach(suggestion => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.textContent = suggestion.description;
+                    item.addEventListener('click', () => {
+                        addressInput.value = suggestion.description;
+                        clearSuggestions();
+                    });
+                    suggestionsContainer.appendChild(item);
+                });
+                addressInput.parentNode.appendChild(suggestionsContainer);
+            };
+
+            const clearSuggestions = () => {
+                const existingSuggestions = addressInput.parentNode.querySelector('.autocomplete-suggestions');
+                if (existingSuggestions) {
+                    existingSuggestions.remove();
+                }
+            };
+
+            // --- Event Listeners ---
+            verifyBtn.addEventListener('click', () => {
+                verifyBtn.disabled = true;
+                verifyBtn.textContent = 'Redirecting...';
+                window.location.href = '/verify-email';
+            });
+
+            interestsListModal.addEventListener('click', (e) => {
+                if (e.target.classList.contains('interest-choice')) {
+                    const button = e.target;
+                    const interest = button.dataset.interest;
+                    button.classList.toggle('selected');
+                    if (tempSelectedInterests.includes(interest)) {
+                        tempSelectedInterests = tempSelectedInterests.filter(i => i !== interest);
+                    } else {
+                        tempSelectedInterests.push(interest);
+                    }
+                }
+            });
+
+            doneSelectingBtn.addEventListener('click', () => {
+                userInterests = [...new Set([...userInterests, ...tempSelectedInterests])];
+                renderTags();
+                interestsModal.hide();
+            });
+
+            tagsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-tag-btn')) {
+                    if (userInterests.length > 3) {
+                        const interestToRemove = e.target.dataset.interest;
+                        userInterests = userInterests.filter(interest => interest !== interestToRemove);
+                        renderTags();
+                    } else {
+                        showToast('You must have at least 3 interests.');
+                    }
+                }
+            });
+
+            wantsMailSwitch.addEventListener('change', toggleAddressField);
+
+            addressInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    getAddressSuggestions(addressInput.value);
+                }, 300);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (e.target.id !== 'address') {
+                    clearSuggestions();
+                }
+            });
+
+            [nameInput, bioTextarea, addressInput].forEach(input => {
+                input.addEventListener('input', () => {
+                    if (input.classList.contains('is-invalid')) {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+            });
+            
+            genderOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    genderOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedGender = option.dataset.gender;
+                });
+            });
+
+            avatarContainer.addEventListener('click', openAvatarModal);
+
+            profileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = nameInput.value.trim();
+                const dob = document.getElementById('dob').value;
+                const bio = bioTextarea.value.trim();
+                const address = addressInput.value.trim();
+                const dobYear = dob ? new Date(dob).getFullYear() : 0;
+
+                if (!name) { showToast('Please enter your full name.'); return; }
+                if (!dob) { showToast('Please enter your date of birth.'); return; }
+                if (dobYear < 1925) { showToast('Please enter a valid year of birth (1925 or later).'); return; }
+                if (bio.split(/\s+/).length < 25) { showToast('Your bio must be at least 25 words long.'); return; }
+                if (userInterests.length < 3) { showToast('Please select at least 3 interests.'); return; }
+                if (!address && wantsMailSwitch.checked) { showToast('Please provide a mailing address or opt out.'); return; }
+                if (!selectedGender) { showToast('Please select a gender.'); return; }
+
+                const formData = {
+                    name, dob, bio,
+                    email: document.getElementById('email').value,
+                    interests: userInterests,
+                    address: address,
+                    wantsPhysicalMail: wantsMailSwitch.checked,
+                    gender: selectedGender,
+                    avatar: selectedAvatarUrl
+                };
+                
+                saveButton.disabled = true;
+
+                try {
+                    const res = await fetch(profileForm.action, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData) 
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        window.location.href = "/dashboard";
+                    } else {
+                        const errorMessage = data.error ? data.error.toLowerCase() : "";
+                        showToast(data.error || "An unknown error occurred.");
+
+                        if (errorMessage.includes('inappropriate')) {
+                            bioTextarea.classList.add('is-invalid');
+                            nameInput.classList.add('is-invalid');
+                            addressInput.classList.add('is-invalid');
+                        }
+                    }
+                } catch (err) {
+                    alert(err);
+                    console.error("Error submitting form:", err);
+                    showToast("Could not connect to the server. Please try again later.");
+                } finally {
+                    saveButton.disabled = false;
+                }
+            });
+
+            // --- INITIALIZATION ---
+            try {
+                console.log('Fetching user profile...');
+                const response = await fetch('/api/getUserProfile');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        console.log('User not authenticated, redirecting to login');
+                        window.location.href = '/login-page';
+                        return;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const userData = await response.json();
+                console.log('User data loaded successfully:', userData);
+                populateForm(userData);
+                
+                // Also update the sidebar to ensure premium status is applied
+                const sidebarName = document.getElementById('sidebar-name');
+                if (sidebarName && userData.premium) {
+                    sidebarName.classList.add('premium-name-gradient');
+                }
+                
+                // Update notification badge
+                try {
+                    const unreadResponse = await fetch('/api/unread-counts');
+                    if (unreadResponse.ok) {
+                        const unreadData = await unreadResponse.json();
+                        const notificationBadge = document.getElementById('sidebar-notification-badge');
+                        
+                        if (notificationBadge) {
+                            if (unreadData.hasUnread && unreadData.unreadByType.total > 0) {
+                                notificationBadge.textContent = unreadData.unreadByType.total;
+                                notificationBadge.classList.remove('d-none');
+                            } else {
+                                notificationBadge.classList.add('d-none');
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating notification badge:', error);
+                }
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+                
+                // Check if it's a network error or server error
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    showToast('Network error. Please check your connection and refresh the page.');
+                } else if (error.message && error.message.includes('401')) {
+                    console.log('Authentication error, redirecting to login');
+                    window.location.href = '/login-page';
+                } else {
+                    showToast('Failed to load profile. Please refresh the page.');
+                }
+            }
+        });
+    </script>
+
+</body>
+</ht

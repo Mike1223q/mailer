@@ -1,0 +1,291 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+</head>
+<body>
+    <section class="hero position-relative">
+    <div class="container-fluid">
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
+            <div class="col-md-3 mb-2 mb-md-0">
+                <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+                    <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap">
+                        <use xlink:href="#bootstrap"></use>
+                    </svg>
+                </a>
+            </div>
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
+                <li><a href="#features" class="nav-link px-2 text-white">Features</a></li>
+                <li><a href="#how" class="nav-link px-2 text-white">How</a></li>
+                <li><a href="#pricing" class="nav-link px-2 text-white">Pricing</a></li>
+                <li><a href="#about" class="nav-link px-2 text-white">About</a></li>
+              </ul>
+            
+            <% if (!user) { %>
+            <div class="col-md-3 text-end px-5">
+                <button type="button" class="btn btn-outline-light me-2" onclick="window.location.href='/login-page'">Login</button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/register-page'">Sign up</button>
+
+            </div>
+            <% } else { %>
+            <div class="col-md-3 text-end px-5">
+                <button type="button" class="btn btn-outline-light me-2" onclick="window.location.href='/logout'">Logout</button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/dashboard'"><%= user.name %></button>
+            </div>
+            <% } %>
+        </header>
+    </div>
+
+        <video id="bg-video" autoplay loop muted playsinline>
+          <source src="/media/wix-sky.mp4" type="video/mp4" />
+        </video>
+    <div class="container col-xxl-8 px-4 py-5">
+        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+            <div class="col-10 col-sm-8 col-lg-6">
+                <img src="/media/Earth-and-Flight-Paths.png" class="d-block mx-lg-auto img-fluid" alt="Earth and Planes" width="700" height="500" loading="lazy">
+            </div>
+            <div class="col-lg-6">
+                <div class="card bg-light bg-opacity-75 shadow p-4 custom-rounded">
+                  <h1 class="display-5 fw-bold mb-3">Your story begins with a <i>First Letter</i></h1>
+                  <p class="lead mb-4">
+                    In a world of instant messages, we bring back the art of waiting. At First Letter, your connection begins quietly — a sealed envelope, a story waiting to unfold. Each word is a step closer, each page a glimpse into another soul, all arriving at your doorstep in the most personal way possible.
+                    </p>
+                  <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Join Now</button>
+                    <a href="#how"><button type="button" class="btn btn-outline-secondary btn-lg px-4">How It Works</button></a>
+                  </div>
+                </div>
+              </div>
+              
+        </div>
+    </div>
+    </section>
+    <section class="what-we-offer container" id="features">
+        <h1 class="text-start mb-5 custom-top" data-aos="fade-in" data-aos-delay="100">What We Offer</h1>
+        <div class="row">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <img src="/media/writing-girl.png" alt="Girl Writing" class="img-fluid mb-3 custom-img-futures">
+                <h2 >Discover Connections Beyond Looks</h2>
+                <p>Forget endless swiping and judging by photos. Our service lets you meet people based on curiosity and genuine interest — starting only with location, age, and sex. The mystery makes every connection deeper and more meaningful.</p>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <img src="/media/waiting-girl.png" alt="Girl Writing" class="img-fluid mb-3 custom-img-futures">
+                <h2>Experience the Romance of Slow Communication</h2>
+                <p>In a world of instant messages and fleeting chats, rediscover the magic of waiting for a letter to arrive. Each message builds anticipation, turning every exchange into a special moment that’s truly unforgettable.</p>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <img src="/media/sealing-girl.png" alt="Girl Writing" class="img-fluid mb-3 custom-img-futures">
+                <h2>Safe, Private, and Anonymous</h2>
+                <p>Your privacy matters. We act as a trusted intermediary, ensuring your personal contact information stays secure. Connect safely without revealing too much too soon, creating a comfortable space for authentic conversations.</p>
+            </div>
+        </div>
+
+    </section>
+    <section class="how-it-works blue-bg py-5" id="how">
+        <div class="container">
+          <h1 class="text-start mb-5 custom-top" data-aos="fade-in" data-aos-delay="100">How It Works</h1>
+      
+          <div class="row g-4 text-center">
+            
+            <!-- Step 1 -->
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+              <div class="step-box p-4 h-100 d-flex flex-column align-items-center justify-content-center">
+                <div class="step-icon mb-3">📝</div>
+                <div class="step-title">Sign Up</div>
+                <p class="step-text mt-3">Create your profile in minutes and join a community of people who want deeper, slower, more meaningful connections.</p>
+              </div>
+            </div>
+      
+            <!-- Step 2 -->
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+              <div class="step-box p-4 h-100 d-flex flex-column align-items-center justify-content-center">
+                <div class="step-icon mb-3">🔍</div>
+                <div class="step-title">Match</div>
+                <p class="step-text mt-3">Browse a list of potential matches and connect with someone who sparks your curiosity — without the pressure of photos or instant chats.</p>
+              </div>
+            </div>
+      
+            <!-- Step 3 -->
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+              <div class="step-box p-4 h-100 d-flex flex-column align-items-center justify-content-center">
+                <div class="step-icon mb-3">✉️</div>
+                <div class="step-title">Decide</div>
+                <p class="step-text mt-3">Choose how your first letter will be sent: write it by hand and mail it to us, or send your message digitally for us to print and post on your behalf.</p>
+              </div>
+            </div>
+      
+            <!-- Step 4 -->
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+              <div class="step-box p-4 h-100 d-flex flex-column align-items-center justify-content-center">
+                <div class="step-icon mb-3">💌</div>
+                <div class="step-title">Write</div>
+                <p class="step-text mt-3">Share your thoughts, your story, or a simple “hello.” Seal it with care — we’ll make sure it reaches your match safely and privately.</p>
+              </div>
+            </div>
+      
+          </div>
+        </div>
+      </section>
+      <section class="pricing py-5" id="pricing">
+        <div class="container">
+          <h1 class="text-start mb-5 custom-top" data-aos="fade-in" data-aos-delay="100">Membership plans</h1>
+      
+          <div class="row g-4">
+            <!-- Starter -->
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
+              <div class="pricing-card p-4 h-100 custom-rounded">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3 class="mb-0 text-white">Starter</h3>
+                  <span class="pricing-badge">Begin</span>
+                </div>
+      
+                <div class="price text-white mb-2">
+                  <span class="display-6 fw-bold">$4</span>
+                  <span class="text-white-50">.99 per month</span>
+                </div>
+                <p class="text-white-75 mb-4">Try the art of letters at your own pace.</p>
+      
+                <ul class="list-unstyled text-white-75 feature-list mb-4">
+                  <li class="feature-item">1 outgoing letter per month</li>
+                  <li class="feature-item">Community matches</li>
+                  <li class="feature-item">Basic support</li>
+                </ul>
+
+                <button class="btn btn-outline-soft w-100 mt-auto">Get Started</button>
+
+              </div>
+            </div>
+      
+            <!-- Standard -->
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="250">
+              <div class="pricing-card p-4 h-100 custom-rounded position-relative">
+                <span class="best-value badge bg-primary position-absolute mt-2 top-0 start-50 translate-middle-x mt-n2">Most popular</span>
+      
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3 class="mb-0 text-white">Standard</h3>
+                  <span class="pricing-badge">Steady</span>
+                </div>
+      
+                <div class="price text-white mb-2">
+                  <span class="display-6 fw-bold">$7</span>
+                  <span class="text-white-50">.99 per month</span>
+                </div>
+                <p class="text-white-75 mb-4">More letters, more room to unfold your story.</p>
+      
+                <ul class="list-unstyled text-white-75 feature-list mb-4">
+                  <li class="feature-item">4 outgoing letters per month</li>
+                  <li class="feature-item">Priority matching</li>
+                  <li class="feature-item">Printing and postage included</li>
+                </ul>
+      
+                <button class="btn btn-primary w-100 mt-auto">Choose Standard</button>
+              </div>
+            </div>
+      
+            <!-- Premium -->
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="350">
+              <div class="pricing-card p-4 h-100 custom-rounded">
+                <span class="best-value badge bg-primary position-absolute mt-2 top-0 start-50 translate-middle-x mt-n2">Most functionalities</span>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3 class="mb-0 text-white">Premium</h3>
+                  <span class="pricing-badge">Deep dive</span>
+                </div>
+      
+                <div class="price text-white mb-2">
+                  <span class="display-6 fw-bold">$9</span>
+                  <span class="text-white-50">.99 per month</span>
+                </div>
+                <p class="text-white-75 mb-4">For the devoted letter writer.</p>
+      
+                <ul class="list-unstyled text-white-75 feature-list mb-4">
+                  <li class="feature-item">Unlimited incoming letters</li>
+                  <li class="feature-item">8 outgoing letters per month</li>
+                  <li class="feature-item">Keepsake paper and sealing</li>
+                  <li class="feature-item">Priority support</li>
+                </ul>
+                <button class="btn btn-outline-soft w-100 mt-auto">Choose Premium</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="why-us blue-bg py-5" id="about">
+        <div class="container">
+          <div class="row align-items-center">
+            
+            <!-- Image column -->
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right" data-aos-delay="100">
+              <img src="/media/stacking-mails.png" 
+                   alt="About Our Company" 
+                   class="img-fluid custom-img-about">
+            </div>
+      
+            <!-- Text column -->
+            <div class="col-lg-6 text-white" data-aos="fade-left" data-aos-delay="200">
+              <h1 class="fw-bold mb-4">Why Us?</h1>
+              <p class="lead mb-4">
+                <span class="fw-bold">Meaningful Over Instant</span><br> We believe connections should be more than just quick swipes and short texts. Our platform encourages deeper, slower conversations that reveal the real person behind the words.<br><br><span class="fw-bold">Pressure, Just Curiosity</span><br> Here, you won’t feel judged by photos or instant replies. Instead, you connect through shared interests, values, and stories — the way real friendships start.<br><br> <span class="fw-bold">Safe & Private Communication</span><br> Your letters and personal details are handled with care. Whether handwritten or digital, every message is securely delivered to your match.<br><br><span class="fw-bold">A Community That Cares</span><br> You’ll join a network of people who value kindness, patience, and genuine connection — not algorithms or superficial matches.
+              </p>
+              <button class="btn btn-light btn-lg mt-4">Get Started</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <footer class="site-footer blue-bg pt-4 pb-3">
+        <hr class="footer-sep my-3">
+
+        <div class="container">
+      
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+      
+            <!-- Left: Copyright -->
+            <div class="small">
+              © 2025 YourCompany. All rights reserved.
+            </div>
+      
+            <!-- Middle: Support -->
+            <div class="small">
+              <span>Support:</span>
+              <a href="mailto:support@yourcompany.com" class="footer-link">support@yourcompany.com</a>
+            </div>
+      
+            <!-- Middle: Social icons -->
+            <div class="footer-social d-flex gap-2">
+              <a href="https://x.com/yourcompany" class="social-btn" aria-label="X">
+                <!-- SVG -->
+              </a>
+              <a href="https://instagram.com/yourcompany" class="social-btn" aria-label="Instagram">
+                <!-- SVG -->
+              </a>
+              <a href="https://linkedin.com/company/yourcompany" class="social-btn" aria-label="LinkedIn">
+                <!-- SVG -->
+              </a>
+            </div>
+      
+            <!-- Right: Legal links -->
+            <ul class="list-inline small mb-0">
+              <li class="list-inline-item"><a class="footer-link" href="/privacy">Privacy</a></li>
+              <li class="list-inline-item"><a class="footer-link" href="/terms">Terms</a></li>
+              <li class="list-inline-item"><a class="footer-link" href="/cookies">Cookies</a></li>
+            </ul>
+      
+          </div>
+        </div>
+      </footer>
+      
+</body>
+<script>
+    AOS.init({
+      delay: 200, // delay in ms before animation starts
+      duration: 1000, // animation duration
+      once: true, // whether animation should happen only once
+    });
+  </script>
+</html>

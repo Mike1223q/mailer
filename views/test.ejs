@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login & Register Test</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        input {
+            display: block;
+            margin: 8px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+        .box {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Register</h2>
+    <div class="box">
+        <input type="text" id="regUsername" placeholder="Username">
+        <input type="password" id="regPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+    </div>
+
+    <h2>Login</h2>
+    <div class="box">
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <p id="message"></p>
+
+    <script>
+        async function register() {
+            const email = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+
+            const res = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            document.getElementById('message').innerText = await res.text();
+        }
+
+        async function login() {
+            const email = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const res = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            document.getElementById('message').innerText = await res.text();
+        }
+    </script>
+</body>
+</html>
