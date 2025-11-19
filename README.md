@@ -150,11 +150,4 @@ Contributions are welcome. Please:
 
 Add a CODE_OF_CONDUCT or CONTRIBUTING.md if you want stricter rules.
 
-License
-Specify your license here (e.g., MIT). Example:
-This project is licensed under the MIT License — see the LICENSE file for details.
-
-Contact
-Created by Mike1223q — add contact info or a link to your GitHub profile.
-
 ---
