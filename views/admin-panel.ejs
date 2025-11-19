@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Mailer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<%- include('header-mathes') %>
+
+<body>
+    <%- include('partials/sidebar') %>
+    
+    <div class="admin-container">
+        <div class="admin-panel">
+            <div class="admin-header">
+                <h1><i class="fas fa-crown"></i> Admin Panel</h1>
+                <p>Manage referral programs and user settings</p>
+            </div>
+
+            <!-- Referral Programs Overview -->
+            <div class="admin-section">
+                <h2><i class="fas fa-chart-line"></i> Referral Programs Overview</h2>
+                <div class="program-cards">
+                    <div class="program-card standard">
+                        <div class="program-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="program-details">
+                            <h3>Standard Program</h3>
+                            <p>5% commission on all purchases</p>
+                            <span class="program-type">Default for all users</span>
+                        </div>
+                    </div>
+                    
+                    <div class="program-card offer-5">
+                        <div class="program-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="program-details">
+                            <h3>$5 Offer Program</h3>
+                            <p>$5 per paid subscription + 15% for 6 months</p>
+                            <span class="program-type">Premium offer</span>
+                        </div>
+                    </div>
+                    
+                    <div class="program-card offer-10">
+                        <div class="program-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="program-details">
+                            <h3>$10 Signup Program</h3>
+                            <p>$10 when referred user subscribes first month</p>
+                            <span class="program-type">Signup focused</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management -->
+            <div class="admin-section">
+                <h2><i class="fas fa-users"></i> Users Management</h2>
+                <div class="table-controls">
+                    <div class="filter-section">
+                        <div class="filter-group">
+                            <label for="user-search">
+                                <i class="fas fa-search"></i> Search Users:
+                            </label>
+                            <input type="text" id="user-search" class="filter-input" placeholder="Search by name or email...">
+                        </div>
+                        <div class="filter-group">
+                            <label for="program-filter">
+                                <i class="fas fa-tags"></i> Program Filter:
+                            </label>
+                            <select id="program-filter" class="filter-select">
+                                <option value="">All Programs</option>
+                                <option value="standard">Standard</option>
+                                <option value="offer_5">$5 Offer</option>
+                                <option value="offer_10">$10 Retention</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Referrals</th>
+                                <th>Program</th>
+                                <th>Registered</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr class="loading-row">
+                                <td colspan="7">
+                                    <div class="loading-spinner">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading users...
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="users-pagination" class="pagination-container">
+                    <!-- Pagination will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Referral Management -->
+            <div class="admin-section">
+                <h2><i class="fas fa-handshake"></i> Referral Management</h2>
+                <div class="table-controls">
+                    <div class="filter-section">
+                        <div class="filter-group">
+                            <label for="referral-status-filter">
+                                <i class="fas fa-filter"></i> Status Filter:
+                            </label>
+                            <select id="referral-status-filter" class="filter-select">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending Review</option>
+                                <option value="approved">Approved (Waiting)</option>
+                                <option value="paid">Paid</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="suspicious-filter">
+                                <i class="fas fa-shield-alt"></i> Fraud Filter:
+                            </label>
+                            <select id="suspicious-filter" class="filter-select">
+                                <option value="all">All Referrals</option>
+                                <option value="suspected">Suspicious Only</option>
+                                <option value="clean">Clean Only</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="referrals-table-container">
+                    <table class="referrals-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Referrer</th>
+                                <th>Referred User</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>IPs</th>
+                                <th>Suspected</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="referrals-table-body">
+                            <tr class="loading-row">
+                                <td colspan="10">
+                                    <div class="loading-spinner">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Loading referrals...
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="referrals-pagination" class="pagination-container">
+                    <!-- Pagination will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Program Modal -->
+    <div class="modal fade" id="changeProgramModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Referral Program</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Change referral program for <strong id="modal-user-name"></strong></p>
+                    <div class="program-selection">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="programType" value="standard" id="standard-radio">
+                            <label class="form-check-label" for="standard-radio">
+                                <strong>Standard Program</strong><br>
+                                <small>5% commission on all purchases</small>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="programType" value="offer_5" id="offer5-radio">
+                            <label class="form-check-label" for="offer5-radio">
+                                <strong>$5 Offer Program</strong><br>
+                                <small>$5 per paid subscription + 15% for 6 months</small>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="programType" value="offer_10" id="offer10-radio">
+                            <label class="form-check-label" for="offer10-radio">
+                                <strong>$10 Signup Program</strong><br>
+                                <small>$10 when referred user subscribes first month</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-program-change">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('footer-mathes') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -2,290 +2,766 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mailer</title>
+    <title>First Letter - Your Story Begins Here</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles/main.css">
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 </head>
 <body>
-    <section class="hero position-relative">
-    <div class="container-fluid">
-        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4">
-            <div class="col-md-3 mb-2 mb-md-0">
-                <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
-                    <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap">
-                        <use xlink:href="#bootstrap"></use>
-                    </svg>
-                </a>
-            </div>
-            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
-                <li><a href="#features" class="nav-link px-2 text-white">Features</a></li>
-                <li><a href="#how" class="nav-link px-2 text-white">How</a></li>
-                <li><a href="#pricing" class="nav-link px-2 text-white">Pricing</a></li>
-                <li><a href="#about" class="nav-link px-2 text-white">About</a></li>
-              </ul>
-            
-            <% if (!user) { %>
-            <div class="col-md-3 text-end px-5">
-                <button type="button" class="btn btn-outline-light me-2" onclick="window.location.href='/login-page'">Login</button>
-                <button type="button" class="btn btn-primary" onclick="window.location.href='/register-page'">Sign up</button>
-
-            </div>
-            <% } else { %>
-            <div class="col-md-3 text-end px-5">
-                <button type="button" class="btn btn-outline-light me-2" onclick="window.location.href='/logout'">Logout</button>
-                <button type="button" class="btn btn-primary" onclick="window.location.href='/dashboard'"><%= user.name %></button>
-            </div>
-            <% } %>
-        </header>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="bg-gradient"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
     </div>
 
-        <video id="bg-video" autoplay loop muted playsinline>
-          <source src="/media/wix-sky.mp4" type="video/mp4" />
-        </video>
-    <div class="container col-xxl-8 px-4 py-5">
-        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-            <div class="col-10 col-sm-8 col-lg-6">
-                <img src="/media/Earth-and-Flight-Paths.png" class="d-block mx-lg-auto img-fluid" alt="Earth and Planes" width="700" height="500" loading="lazy">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-glass fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/media/logo.png" alt="First Letter" class="navbar-logo me-2">
+                <span class="brand-text">First Letter</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+                
+                <div class="navbar-actions">
+            <% if (!user) { %>
+                        <button class="btn btn-glass me-2" onclick="window.location.href='/login'">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </button>
+                        <button class="btn btn-primary-glass" onclick="window.location.href='/register'">
+                            <i class="fas fa-user-plus me-1"></i>Sign Up
+                        </button>
+                    <% } else { %>
+                        <button class="btn btn-glass me-2" onclick="window.location.href='/logout'">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </button>
+                        <button class="btn btn-primary-glass" onclick="window.location.href='/dashboard'" title="Go to Dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </button>
+                    <% } %>
+                </div>
             </div>
-            <div class="col-lg-6">
-                <div class="card bg-light bg-opacity-75 shadow p-4 custom-rounded">
-                  <h1 class="display-5 fw-bold mb-3">Your story begins with a <i>First Letter</i></h1>
-                  <p class="lead mb-4">
-                    In a world of instant messages, we bring back the art of waiting. At First Letter, your connection begins quietly — a sealed envelope, a story waiting to unfold. Each word is a step closer, each page a glimpse into another soul, all arriving at your doorstep in the most personal way possible.
-                    </p>
-                  <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                    <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Join Now</button>
-                    <a href="#how"><button type="button" class="btn btn-outline-secondary btn-lg px-4">How It Works</button></a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6" data-aos="fade-right" data-aos-delay="200">
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <i class="fas fa-heart me-2"></i>
+                            <span>Where Stories Begin</span>
+                        </div>
+                        
+                        <h1 class="hero-title">
+                            Your story begins with a 
+                            <span class="text-gradient">First Letter</span>
+                        </h1>
+                        
+                        <p class="hero-description">
+                            In a world of instant messages, we bring back the art of waiting. 
+                            At First Letter, your connection begins quietly — a sealed envelope, 
+                            a story waiting to unfold. Each word is a step closer, each page a 
+                            glimpse into another soul.
+                        </p>
+                        
+                        <div class="hero-actions">
+                            <button class="btn btn-primary-hero me-3" onclick="window.location.href='/register'">
+                                <i class="fas fa-rocket me-2"></i>
+                                Start Your Journey
+                            </button>
+                            <button class="btn btn-outline-hero" onclick="document.getElementById('how').scrollIntoView()">
+                                <i class="fas fa-play me-2"></i>
+                                How It Works
+                            </button>
+                        </div>
+                        
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">10K+</div>
+                                <div class="stat-label">Letters Sent</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">5K+</div>
+                                <div class="stat-label">Happy Users</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">98%</div>
+                                <div class="stat-label">Satisfaction</div>
+                            </div>
+                        </div>
+            </div>
+    </div>
+
+                <div class="col-lg-6" data-aos="fade-left" data-aos-delay="400">
+                    <div class="hero-visual">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-envelope"></i>
+                            <span>E-Letter</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <i class="fas fa-mail-bulk"></i>
+                            <span>Letter</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-gift"></i>
+                            <span>Gift</span>
+                        </div>
+                        <div class="hero-image">
+                            <!-- <video autoplay loop muted playsinline class="img-fluid">
+                                <source src="/media/EarthAnimation.webm" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video> -->
+            </div>
                   </div>
                 </div>
-              </div>
-              
         </div>
     </div>
     </section>
-    <section class="what-we-offer container" id="features">
-        <h1 class="text-start mb-5 custom-top" data-aos="fade-in" data-aos-delay="100">What We Offer</h1>
-        <div class="row">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <img src="/media/writing-girl.png" alt="Girl Writing" class="img-fluid mb-3 custom-img-futures">
-                <h2 >Discover Connections Beyond Looks</h2>
-                <p>Forget endless swiping and judging by photos. Our service lets you meet people based on curiosity and genuine interest — starting only with location, age, and sex. The mystery makes every connection deeper and more meaningful.</p>
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header text-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="section-badge">
+                    <i class="fas fa-star me-2"></i>
+                    <span>What We Offer</span>
+                </div>
+                <h2 class="section-title">Experience the Magic of Meaningful Connections</h2>
+                <p class="section-description">
+                    Discover a new way to connect that goes beyond superficial interactions
+                </p>
             </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <img src="/media/waiting-girl.png" alt="Girl Writing" class="img-fluid mb-3 custom-img-futures">
-                <h2>Experience the Romance of Slow Communication</h2>
-                <p>In a world of instant messages and fleeting chats, rediscover the magic of waiting for a letter to arrive. Each message builds anticipation, turning every exchange into a special moment that’s truly unforgettable.</p>
+            
+            <div class="row g-4">
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-eye-slash"></i>
+                        </div>
+                        <div class="feature-image">
+                            <img src="/media/writing-girl.png" alt="Discover Connections" class="img-fluid">
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Discover Connections Beyond Looks</h3>
+                            <p class="feature-description">
+                                Forget endless swiping and judging by photos. Our service lets you meet people based on 
+                                curiosity and genuine interest — starting with essential details and interests, then 
+                                gradually revealing more about each person. The mystery makes every connection deeper 
+                                and more meaningful.
+                            </p>
+                            <div class="feature-benefits">
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>No photo pressure</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Genuine connections</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Curiosity-driven matching</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="feature-image">
+                            <img src="/media/waiting-girl.png" alt="Slow Communication" class="img-fluid">
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Experience the Romance of Slow Communication</h3>
+                            <p class="feature-description">
+                                In a world of instant messages and fleeting chats, rediscover the magic of waiting 
+                                for a letter to arrive. Each message builds anticipation, turning every exchange 
+                                into a special moment that's truly unforgettable.
+                            </p>
+                            <div class="feature-benefits">
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>24-hour delivery</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Anticipation building</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Meaningful moments</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-image">
+                            <img src="/media/sealing-girl.png" alt="Safe & Private" class="img-fluid">
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Safe, Private, and Anonymous</h3>
+                            <p class="feature-description">
+                                Your privacy matters. We act as a trusted intermediary, ensuring your personal 
+                                contact information stays secure. Connect safely without revealing too much too 
+                                soon, creating a comfortable space for authentic conversations.
+                            </p>
+                            <div class="feature-benefits">
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Complete privacy</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Secure delivery</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Anonymous matching</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <img src="/media/sealing-girl.png" alt="Girl Writing" class="img-fluid mb-3 custom-img-futures">
-                <h2>Safe, Private, and Anonymous</h2>
-                <p>Your privacy matters. We act as a trusted intermediary, ensuring your personal contact information stays secure. Connect safely without revealing too much too soon, creating a comfortable space for authentic conversations.</p>
             </div>
         </div>
-
     </section>
-    <section class="how-it-works blue-bg py-5" id="how">
+    <!-- How It Works Section -->
+    <section id="how" class="how-it-works-section">
         <div class="container">
-          <h1 class="text-start mb-5 custom-top" data-aos="fade-in" data-aos-delay="100">How It Works</h1>
-      
-          <div class="row g-4 text-center">
+            <div class="section-header text-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="section-badge">
+                    <i class="fas fa-cogs me-2"></i>
+                    <span>How It Works</span>
+                </div>
+                <h2 class="section-title">Your Journey to Meaningful Connections</h2>
+                <p class="section-description">
+                    Four simple steps to start your letter-writing adventure
+                </p>
+            </div>
             
+            <div class="steps-container">
+                <div class="row g-4">
             <!-- Step 1 -->
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-              <div class="step-box p-4 h-100 d-flex flex-column align-items-center justify-content-center">
-                <div class="step-icon mb-3">📝</div>
-                <div class="step-title">Sign Up</div>
-                <p class="step-text mt-3">Create your profile in minutes and join a community of people who want deeper, slower, more meaningful connections.</p>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="step-card">
+                            <div class="step-number">01</div>
+                            <div class="step-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3 class="step-title">Sign Up</h3>
+                                <p class="step-description">
+                                    Create your profile in minutes and join a community of people who want 
+                                    deeper, slower, more meaningful connections.
+                                </p>
+                            </div>
+                            <div class="step-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
               </div>
             </div>
       
             <!-- Step 2 -->
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-              <div class="step-box p-4 h-100 d-flex flex-column align-items-center justify-content-center">
-                <div class="step-icon mb-3">🔍</div>
-                <div class="step-title">Match</div>
-                <p class="step-text mt-3">Browse a list of potential matches and connect with someone who sparks your curiosity — without the pressure of photos or instant chats.</p>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="step-card">
+                            <div class="step-number">02</div>
+                            <div class="step-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3 class="step-title">Match</h3>
+                                <p class="step-description">
+                                    Browse a list of potential matches and connect with someone who sparks 
+                                    your curiosity — without the pressure of photos or instant chats.
+                                </p>
+                            </div>
+                            <div class="step-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
               </div>
             </div>
       
             <!-- Step 3 -->
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-              <div class="step-box p-4 h-100 d-flex flex-column align-items-center justify-content-center">
-                <div class="step-icon mb-3">✉️</div>
-                <div class="step-title">Decide</div>
-                <p class="step-text mt-3">Choose how your first letter will be sent: write it by hand and mail it to us, or send your message digitally for us to print and post on your behalf.</p>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                        <div class="step-card">
+                            <div class="step-number">03</div>
+                            <div class="step-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3 class="step-title">Decide</h3>
+                                <p class="step-description">
+                                    Choose how your first letter will be sent: send an E-Letter with simulated 
+                                    real letter delivery time, or send your message digitally for us to print 
+                                    and post with actual physical delivery.
+                                </p>
+                            </div>
+                            <div class="step-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
               </div>
             </div>
       
             <!-- Step 4 -->
-            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
-              <div class="step-box p-4 h-100 d-flex flex-column align-items-center justify-content-center">
-                <div class="step-icon mb-3">💌</div>
-                <div class="step-title">Write</div>
-                <p class="step-text mt-3">Share your thoughts, your story, or a simple “hello.” Seal it with care — we’ll make sure it reaches your match safely and privately.</p>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                        <div class="step-card">
+                            <div class="step-number">04</div>
+                            <div class="step-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3 class="step-title">Write</h3>
+                                <p class="step-description">
+                                    Share your thoughts, your story, or a simple "hello." Seal it with care 
+                                    — we'll make sure it reaches your match safely and privately.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
               </div>
-            </div>
-      
           </div>
         </div>
       </section>
-      <section class="pricing py-5" id="pricing">
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section">
         <div class="container">
-          <h1 class="text-start mb-5 custom-top" data-aos="fade-in" data-aos-delay="100">Membership plans</h1>
-      
-          <div class="row g-4">
-            <!-- Starter -->
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
-              <div class="pricing-card p-4 h-100 custom-rounded">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h3 class="mb-0 text-white">Starter</h3>
-                  <span class="pricing-badge">Begin</span>
+            <div class="section-header text-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="section-badge">
+                    <i class="fas fa-crown me-2"></i>
+                    <span>Membership Plans</span>
+                </div>
+                <h2 class="section-title">Choose Your Letter-Writing Journey</h2>
+                <p class="section-description">
+                    Select the plan that fits your communication style
+                </p>
                 </div>
       
-                <div class="price text-white mb-2">
-                  <span class="display-6 fw-bold">$4</span>
-                  <span class="text-white-50">.99 per month</span>
-                </div>
-                <p class="text-white-75 mb-4">Try the art of letters at your own pace.</p>
-      
-                <ul class="list-unstyled text-white-75 feature-list mb-4">
-                  <li class="feature-item">1 outgoing letter per month</li>
-                  <li class="feature-item">Community matches</li>
-                  <li class="feature-item">Basic support</li>
-                </ul>
-
-                <button class="btn btn-outline-soft w-100 mt-auto">Get Started</button>
-
+            <div class="row g-4 justify-content-center">
+                <!-- Starter Plan -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <div class="plan-badge">Always Free</div>
+                            <h3 class="plan-name">Starter</h3>
+                            <div class="plan-price">
+                                <span class="currency">$</span>
+                                <span class="amount">0</span>
+                                <span class="period">/month</span>
+                            </div>
+                            <p class="plan-description">Try the art of letters at your own pace</p>
+                        </div>
+                        
+                        <div class="pricing-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Unlimited E-Letters</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>5 Free Matches Per Week</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>SafeSave Function</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Personal Information Protection</span>
               </div>
             </div>
       
-            <!-- Standard -->
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="250">
-              <div class="pricing-card p-4 h-100 custom-rounded position-relative">
-                <span class="best-value badge bg-primary position-absolute mt-2 top-0 start-50 translate-middle-x mt-n2">Most popular</span>
-      
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h3 class="mb-0 text-white">Standard</h3>
-                  <span class="pricing-badge">Steady</span>
+                        <a href="#" class="btn btn-pricing-outline w-100" onclick="handlePricingClick(event)">
+                            <i class="fas fa-rocket me-2"></i>
+                            Get Started
+                        </a>
+                    </div>
                 </div>
       
-                <div class="price text-white mb-2">
-                  <span class="display-6 fw-bold">$7</span>
-                  <span class="text-white-50">.99 per month</span>
+                <!-- Standard Plan -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="pricing-card featured">
+                        <div class="popular-badge">
+                            <i class="fas fa-star me-1"></i>
+                            Most Popular
                 </div>
-                <p class="text-white-75 mb-4">More letters, more room to unfold your story.</p>
-      
-                <ul class="list-unstyled text-white-75 feature-list mb-4">
-                  <li class="feature-item">4 outgoing letters per month</li>
-                  <li class="feature-item">Priority matching</li>
-                  <li class="feature-item">Printing and postage included</li>
-                </ul>
-      
-                <button class="btn btn-primary w-100 mt-auto">Choose Standard</button>
+                        
+                        <div class="pricing-header">
+                            <div class="plan-badge">Steady</div>
+                            <h3 class="plan-name">Standard</h3>
+                            <div class="plan-price">
+                                <span class="currency">$</span>
+                                <span class="amount">6</span>
+                                <span class="period">.99/month</span>
+                            </div>
+                            <p class="plan-description">More letters, more room to unfold your story</p>
+                        </div>
+                        
+                        <div class="pricing-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Includes all the benefits of the free plan</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>70+ Matches Per Week</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Discounts on Physical Letters</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Free Coins Every Month</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Premium Avatars</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Ability to Edit Sent Messages</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Boosted Delivery Time</span>
               </div>
             </div>
       
-            <!-- Premium -->
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="350">
-              <div class="pricing-card p-4 h-100 custom-rounded">
-                <span class="best-value badge bg-primary position-absolute mt-2 top-0 start-50 translate-middle-x mt-n2">Most functionalities</span>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h3 class="mb-0 text-white">Premium</h3>
-                  <span class="pricing-badge">Deep dive</span>
+                        <a href="#" class="btn btn-pricing-primary w-100" onclick="handlePricingClick(event)">
+                            <i class="fas fa-crown me-2"></i>
+                            Choose Standard
+                        </a>
+                    </div>
                 </div>
       
-                <div class="price text-white mb-2">
-                  <span class="display-6 fw-bold">$9</span>
-                  <span class="text-white-50">.99 per month</span>
+                <!-- Annual Plan -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <div class="plan-badge">Best Value</div>
+                            <h3 class="plan-name">Annual</h3>
+                            <div class="plan-price">
+                                <span class="currency">$</span>
+                                <span class="amount">39</span>
+                                <span class="period">.99/year</span>
+                            </div>
+                            <p class="plan-description">Save 52% with annual billing - perfect for committed writers</p>
+                        </div>
+                        
+                        <div class="pricing-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Includes all the benefits of the free plan</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>70+ Matches Per Week</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Discounts on Physical Letters</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Free Coins Every Month</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Premium Avatars</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Ability to Edit Sent Messages</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Boosted Delivery Time</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Big Money Saver - 52% Off!</span>
+                            </div>
                 </div>
-                <p class="text-white-75 mb-4">For the devoted letter writer.</p>
-      
-                <ul class="list-unstyled text-white-75 feature-list mb-4">
-                  <li class="feature-item">Unlimited incoming letters</li>
-                  <li class="feature-item">8 outgoing letters per month</li>
-                  <li class="feature-item">Keepsake paper and sealing</li>
-                  <li class="feature-item">Priority support</li>
-                </ul>
-                <button class="btn btn-outline-soft w-100 mt-auto">Choose Premium</button>
+                        
+                        <a href="#" class="btn btn-pricing-outline w-100" onclick="handlePricingClick(event)">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            Save 52% Annually
+                        </a>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <section class="why-us blue-bg py-5" id="about">
+    <!-- About Section -->
+    <section id="about" class="about-section">
         <div class="container">
           <div class="row align-items-center">
-            
-            <!-- Image column -->
-            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right" data-aos-delay="100">
-              <img src="/media/stacking-mails.png" 
-                   alt="About Our Company" 
-                   class="img-fluid custom-img-about">
+                <div class="col-lg-6" data-aos="fade-right" data-aos-delay="200">
+                    <div class="about-image">
+                        <img src="/media/stacking-mails.png" alt="About First Letter" class="img-fluid">
+                        <div class="image-decoration"></div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
+                    <div class="about-content">
+                        <div class="section-badge">
+                            <i class="fas fa-heart me-2"></i>
+                            <span>Why Choose Us</span>
+                        </div>
+                        
+                        <h2 class="section-title">Building Meaningful Connections, One Letter at a Time</h2>
+                        
+                        <div class="about-features">
+                            <div class="about-feature">
+                                <div class="feature-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h4>Meaningful Over Instant</h4>
+                                    <p>We believe connections should be more than just quick swipes and short texts. Our platform encourages deeper, slower conversations that reveal the real person behind the words.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="about-feature">
+                                <div class="feature-icon">
+                                    <i class="fas fa-eye-slash"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h4>No Pressure, Just Curiosity</h4>
+                                    <p>Here, you won't feel judged by photos or instant replies. Instead, you connect through shared interests, values, and stories — the way real friendships start.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="about-feature">
+                                <div class="feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h4>Safe & Private Communication</h4>
+                                    <p>Your letters and personal details are handled with care. Whether handwritten or digital, every message is securely delivered to your match.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="about-feature">
+                                <div class="feature-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h4>A Community That Cares</h4>
+                                    <p>You'll join a network of people who value kindness, patience, and genuine connection — not algorithms or superficial matches.</p>
+                                </div>
+                            </div>
             </div>
       
-            <!-- Text column -->
-            <div class="col-lg-6 text-white" data-aos="fade-left" data-aos-delay="200">
-              <h1 class="fw-bold mb-4">Why Us?</h1>
-              <p class="lead mb-4">
-                <span class="fw-bold">Meaningful Over Instant</span><br> We believe connections should be more than just quick swipes and short texts. Our platform encourages deeper, slower conversations that reveal the real person behind the words.<br><br><span class="fw-bold">Pressure, Just Curiosity</span><br> Here, you won’t feel judged by photos or instant replies. Instead, you connect through shared interests, values, and stories — the way real friendships start.<br><br> <span class="fw-bold">Safe & Private Communication</span><br> Your letters and personal details are handled with care. Whether handwritten or digital, every message is securely delivered to your match.<br><br><span class="fw-bold">A Community That Cares</span><br> You’ll join a network of people who value kindness, patience, and genuine connection — not algorithms or superficial matches.
-              </p>
-              <button class="btn btn-light btn-lg mt-4">Get Started</button>
+                        <button class="btn btn-primary-hero mt-4" onclick="window.location.href='/register'">
+                            <i class="fas fa-rocket me-2"></i>
+                            Start Your Journey
+                        </button>
+                    </div>
             </div>
           </div>
         </div>
       </section>
-      <footer class="site-footer blue-bg pt-4 pb-3">
-        <hr class="footer-sep my-3">
 
+    <!-- Footer -->
+    <footer class="site-footer">
         <div class="container">
-      
-          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-      
-            <!-- Left: Copyright -->
-            <div class="small">
-              © 2025 YourCompany. All rights reserved.
+            <div class="footer-content">
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <div class="footer-brand">
+                            <div class="brand-logo">
+                                <i class="fas fa-envelope-open-text"></i>
+                                <span>First Letter</span>
+                            </div>
+                            <p class="brand-description">
+                                Connecting hearts through the timeless art of letter writing. 
+                                Your story begins with a first letter.
+                            </p>
+                        </div>
             </div>
       
-            <!-- Middle: Support -->
-            <div class="small">
-              <span>Support:</span>
-              <a href="mailto:support@yourcompany.com" class="footer-link">support@yourcompany.com</a>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="footer-links">
+                            <h5 class="footer-title">Quick Links</h5>
+                            <ul class="footer-list">
+                                <li><a href="#features">Features</a></li>
+                                <li><a href="#pricing">Pricing</a></li>
+                                <li><a href="#about">About Us</a></li>
+                                <li><a href="#how">How It Works</a></li>
+                            </ul>
+                        </div>
             </div>
       
-            <!-- Middle: Social icons -->
-            <div class="footer-social d-flex gap-2">
-              <a href="https://x.com/yourcompany" class="social-btn" aria-label="X">
-                <!-- SVG -->
-              </a>
-              <a href="https://instagram.com/yourcompany" class="social-btn" aria-label="Instagram">
-                <!-- SVG -->
-              </a>
-              <a href="https://linkedin.com/company/yourcompany" class="social-btn" aria-label="LinkedIn">
-                <!-- SVG -->
-              </a>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="footer-links">
+                            <h5 class="footer-title">Support</h5>
+                            <ul class="footer-list">
+                                <li><a href="#">Contact Us</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
       
-            <!-- Right: Legal links -->
-            <ul class="list-inline small mb-0">
-              <li class="list-inline-item"><a class="footer-link" href="/privacy">Privacy</a></li>
-              <li class="list-inline-item"><a class="footer-link" href="/terms">Terms</a></li>
-              <li class="list-inline-item"><a class="footer-link" href="/cookies">Cookies</a></li>
-            </ul>
-      
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="copyright">
+                            © 2025 First Letter. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="footer-note">
+                            Made with <i class="fas fa-heart text-danger"></i> for meaningful connections
+                        </p>
+                    </div>
+                </div>
           </div>
         </div>
       </footer>
-      
 </body>
+
 <script>
+    // Initialize AOS animations
     AOS.init({
-      delay: 200, // delay in ms before animation starts
-      duration: 1000, // animation duration
-      once: true, // whether animation should happen only once
+        delay: 200,
+        duration: 1000,
+        once: true,
+        offset: 100
     });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar-glass');
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Floating cards animation
+    function animateFloatingCards() {
+        const cards = document.querySelectorAll('.floating-card');
+        cards.forEach((card, index) => {
+            const delay = index * 0.5;
+            card.style.animationDelay = `${delay}s`;
+        });
+    }
+
+    // Initialize animations when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        animateFloatingCards();
+    });
+
+    // Parallax effect for floating shapes
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const shapes = document.querySelectorAll('.shape');
+        
+        shapes.forEach((shape, index) => {
+            const speed = 0.5 + (index * 0.1);
+            const yPos = -(scrolled * speed);
+            shape.style.transform = `translateY(${yPos}px)`;
+        });
+    });
+    // Handle pricing button clicks
+    function handlePricingClick(event) {
+        event.preventDefault();
+        
+        // Check if user is logged in by making a request to check session
+        fetch('/api/check-session')
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    // User is logged in, redirect to marketplace
+                    window.location.href = '/marketplace';
+                } else {
+                    // User is not logged in, redirect to register
+                    window.location.href = '/register';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking session:', error);
+                // If there's an error, default to register page
+                window.location.href = '/register';
+            });
+    }
   </script>
+  
+  <style>
+    .navbar-logo {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+    }
+    
+    @media (max-width: 768px) {
+        .navbar-logo {
+            height: 48px;
+        }
+    }
+  </style>
 </html>

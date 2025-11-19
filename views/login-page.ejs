@@ -1,274 +1,527 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - First Letter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/styles/main.css" rel="stylesheet">
     <style>
-        /* Gradient Background */
-        .gradient-custom {
-          background: #6a11cb;
-          background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
-          background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
-          overflow: hidden;
+        /* Login Page Specific Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeSlideUp 0.8s ease forwards;
         }
 
         @keyframes fadeSlideUp {
-          0% { opacity: 0; transform: translateY(50px); }
-          100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        .card-body {
-          animation: fadeSlideUp 1s ease forwards;
+        .login-title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .form-outline {
-          position: relative;
+        .login-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
         }
 
-        .form-outline input {
-          width: 100%;
-          padding: 16px 12px;
-          font-size: 16px;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          outline: none;
+        .form-floating {
+            position: relative;
+            margin-bottom: 1.5rem;
         }
 
-        .form-outline label {
-          position: absolute;
-          left: 12px;
-          top: 16px;
-          color: #999;
-          font-size: 16px;
-          pointer-events: none;
-          transition: all 0.3s ease;
+        .form-floating input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            padding: 1rem 1rem 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
-        .form-outline input:focus + label,
-        .form-outline input.filled + label {
-          top: -8px;
-          left: 8px;
-          font-size: 12px;
-          color: #06b6d4;
-          background: white;
-          padding: 0 4px;
+        .form-floating input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            color: white;
         }
 
-        .form-control:focus {
-          border-color: #6a11cb;
-          box-shadow: 0 0 8px rgba(106, 17, 203, 0.7);
-          transition: 0.3s ease;
+        .form-floating input::placeholder {
+            color: transparent;
         }
 
-        .btn-outline-light:hover {
-          background-color: rgba(255, 255, 255, 0.1);
-          transform: scale(1.05);
-          transition: 0.3s ease;
+        .form-floating label {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
         }
 
-        p.mb-0 a {
-          position: relative;
-          display: inline-block;
-          overflow: hidden;
+        .form-floating input:focus ~ label,
+        .form-floating input:not(:placeholder-shown) ~ label {
+            color: #667eea;
+            transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
         }
 
-        p.mb-0 a::after {
-          content: '';
-          position: absolute;
-          width: 100%;
-          height: 2px;
-          background: #fff;
-          left: -100%;
-          bottom: 0;
-          transition: 0.3s ease;
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1rem;
         }
 
-        p.mb-0 a:hover::after {
-          left: 0;
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-signup {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-signup:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .forgot-password {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: block;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .forgot-password:hover {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .divider span {
+            padding: 0 1rem;
         }
 
         .google-btn-wrapper {
-          display: flex;
-          justify-content: center;
-          margin-top: 16px;
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
         }
-
+        
         .google-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          padding: 16px 24px;
-          font-size: 16px;
-          font-weight: 600;
-          color: black;
-          background: rgba(255, 255, 255, 0.9);
-          border: 1px solid rgba(0,0,0,0.1);
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
         }
 
         .google-btn:hover {
-          background: rgba(255, 255, 255, 1);
-          transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            color: white;
+            text-decoration: none;
+        }
+
+        .google-btn i {
+            color: #4285f4;
+            font-size: 1.2rem;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            animation: float 20s infinite linear;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .back-to-home {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .back-to-home:hover {
+            color: white;
+            text-decoration: none;
+        }
+
+        .back-to-home i {
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .login-card {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .login-title {
+                font-size: 2rem;
+            }
+            
+            .back-to-home {
+                top: 1rem;
+                left: 1rem;
+            }
         }
     </style>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body style="background-color: hsl(0, 0%, 96%)">
+<body>
 
-    <section class="login">
-        <div class="px-4 py-5 px-md-5 text-center text-lg-start">
-          <div class="container">
-            <div class="row gx-lg-5 align-items-center justify-content-center">
-              <div class="col-lg-5 mb-5 mb-lg-0">
-                <div class="card">
-                  <div class="card-body py-5 px-md-5">
-                    <h2 class="mb-4 text-center">Login</h2>
-                    <form action="/login" method="POST">
-                      <!-- Email -->
-                      <div class="form-outline mb-4">
-                        <input type="email" name="email" id="email" class="form-control" required/>
-                        <label class="form-label" for="email">Email address</label>
-                      </div>
-      
-                      <!-- Password -->
-                      <div class="form-outline mb-2">
-                        <input type="password" name="password" id="password" class="form-control" required/>
-                        <label class="form-label" for="password">Password</label>
-                      </div>
-      
-                      <!-- Forgot password -->
-                      <div class="text-end mb-4">
-                        <a href="/forgot" class="link-secondary" aria-label="Forgot password">Forgot password?</a>
-                      </div>
-      
-                      <div class="d-flex justify-content-between mb-4">
-                        <button type="submit" class="btn btn-primary">Log In</button>
-                        <button type="button" class="btn btn-light" onclick="window.location.href='/register-page'">Sign Up</button>
-                      </div>
-      
-                      <div class="text-center">
-                        <p>or sign up with:</p>
-                        <div class="google-btn-wrapper">
-                          <div id="g_id_onload"
-                            data-client_id="409368143445-v7ukcrsjh9lc9vj2h1t70ufg1fa4ej1v.apps.googleusercontent.com"
-                            data-context="signup"
-                            data-ux_mode="popup"
-                            data-callback="handleCredentialResponse"
-                            data-auto_prompt="false">
-                          </div>
-                          <div class="g_id_signin"
-                            data-type="standard"
-                            data-shape="rectangular"
-                            data-theme="outline"
-                            data-text="signup_with"
-                            data-size="large"
-                            data-logo_alignment="left">
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
+    <!-- Floating Background Shapes -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Back to Home Link -->
+    <a href="/" class="back-to-home">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <h1 class="login-title">Welcome Back</h1>
+            <p class="login-subtitle">Sign in to your account</p>
+            
+            <form action="/login" method="POST" id="loginForm">
+                <!-- Email Input -->
+                <div class="form-floating">
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Email address" required>
+                    <label for="email">Email address</label>
                 </div>
-              </div>
-            </div>
-          </div>
+
+                <!-- Password Input -->
+                <div class="form-floating">
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+
+                <!-- Forgot Password Link -->
+                <a href="/forgot" class="forgot-password">Forgot your password?</a>
+
+                <!-- Login Button -->
+                <button type="submit" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Sign In
+                </button>
+
+                <!-- Sign Up Button -->
+                <button type="button" class="btn btn-signup" onclick="window.location.href='/register'">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Create Account
+                </button>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>or continue with</span>
+                </div>
+
+                <!-- Google Sign In -->
+                <div class="google-btn-wrapper">
+                    <button type="button" class="google-btn" onclick="triggerGoogleSignIn()">
+                        <i class="fab fa-google"></i>
+                        Continue with Google
+                    </button>
+                    <div id="google-signin-button" style="display: none;"></div>
+                </div>
+            </form>
         </div>
-      </section>
+    </div>
       
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script>
-    document.querySelectorAll('.form-outline input').forEach(input => {
-        if(input.value) input.classList.add('filled');
-        input.addEventListener('input', () => {
-            if(input.value) input.classList.add('filled');
-            else input.classList.remove('filled');
-        });
-    });
-    
-    document.querySelector('form').addEventListener('submit', async function(e){
-        e.preventDefault();
-        const form = e.target;
-        const emailField = form.email;
-        const passwordField = form.password;
-    
-        // Remove previous invalid styles & messages
-        [emailField, passwordField].forEach(field => {
-            field.classList.remove('is-invalid');
-            const feedback = field.parentElement.querySelector('.invalid-feedback');
-            if (feedback) feedback.remove();
-        });
-    
-        const data = {
-            email: emailField.value,
-            password: passwordField.value
-        };
-    
-        try {
-            const res = await fetch(form.action, {
-                method: form.method,
-                credentials: "include",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+    <!-- Google Sign-In Script - Not needed for redirect flow -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form submission handling
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const emailField = form.email;
+            const passwordField = form.password;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            // Remove previous error states
+            [emailField, passwordField].forEach(field => {
+                field.classList.remove('is-invalid');
+                field.style.borderColor = 'rgba(255, 255, 255, 0.2)';
             });
-    
-            if (res.status === 401) {
-                // Add red border
-                emailField.classList.add('is-invalid');
-                passwordField.classList.add('is-invalid');
-    
-                // Add red error text under email field
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'invalid-feedback';
-                errorMsg.innerText = 'Invalid email or password';
-                emailField.parentElement.appendChild(errorMsg);
-                return;
-            }
-    
-            if (res.ok) {
-                form.reset();
-                // Redirect to dashboard
-                window.location.href = '/';
-            }
-        } catch (err) {
-            console.error('Error:', err);
-        }
-    });
-    function handleCredentialResponse(response) {
-        console.log("ID token:", response.credential);
-
-        fetch("/auth/google", {
-            method: "POST",
-            credentials: "include", // send cookies/session
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: response.credential })
-        })
-        .then(res => {
-            if (res.ok) {
-                // Redirect to home page if login successful
-                window.location.href = "/";
-            } else {
-                // Handle errors
-                return res.json().then(data => {
-                    console.error("Server error:", data);
-                    alert(data.error || "Login failed");
+            
+            // Show loading state
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing In...';
+            submitBtn.disabled = true;
+            
+            const data = {
+                email: emailField.value,
+                password: passwordField.value
+            };
+            
+            try {
+                const res = await fetch(form.action, {
+                    method: form.method,
+                    credentials: "include",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
                 });
+                
+                if (res.status === 401) {
+                    // Show error state
+                    [emailField, passwordField].forEach(field => {
+                        field.classList.add('is-invalid');
+                        field.style.borderColor = '#dc3545';
+                    });
+                    
+                    // Show error message
+                    showError('Invalid email or password');
+                    return;
+                }
+                
+                if (res.ok) {
+                    // Success - redirect to dashboard
+                    window.location.href = '/';
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                showError('An error occurred. Please try again.');
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             }
-        })
-        .catch(err => console.error("Fetch error:", err));
-    }
-
-        // Initialize Google Sign-In
-        window.onload = () => {
-            google.accounts.id.initialize({
-                client_id: "409368143445-v7ukcrsjh9lc9vj2h1t70ufg1fa4ej1v.apps.googleusercontent.com",
-                callback: handleCredentialResponse
+        });
+        
+        // Error display function
+        function showError(message) {
+            // Remove existing error messages
+            const existingError = document.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Create error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.style.cssText = `
+                color: #dc3545;
+                font-size: 0.9rem;
+                text-align: center;
+                margin-top: 1rem;
+                padding: 0.5rem;
+                background: rgba(220, 53, 69, 0.1);
+                border-radius: 8px;
+                border: 1px solid rgba(220, 53, 69, 0.3);
+            `;
+            errorDiv.textContent = message;
+            
+            // Insert after form
+            const form = document.getElementById('loginForm');
+            form.parentNode.insertBefore(errorDiv, form.nextSibling);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        // Google Sign-In handling
+        function handleCredentialResponse(response) {
+            console.log("ID token:", response.credential);
+            
+            fetch("/auth/google", {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: response.credential })
+            })
+            .then(res => {
+                if (res.ok) {
+                    window.location.href = "/";
+                } else {
+                    return res.json().then(data => {
+                        console.error("Server error:", data);
+                        showError(data.error || "Google sign-in failed");
+                    });
+                }
+            })
+            .catch(err => {
+                console.error("Fetch error:", err);
+                showError("Google sign-in failed. Please try again.");
             });
+        }
+        
+        // Trigger Google Sign-In using redirect
+        function triggerGoogleSignIn() {
+            console.log('Custom Google Sign-In button clicked - redirecting to Google');
+            
+            // Google OAuth 2.0 redirect URL
+            const clientId = "409368143445-v7ukcrsjh9lc9vj2h1t70ufg1fa4ej1v.apps.googleusercontent.com";
+            const redirectUri = `${window.location.protocol}//${window.location.host}/`;
+            const scope = "openid email profile";
+            const responseType = "code";
+            const accessType = "offline";
+            const prompt = "select_account";
+            
+            const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                `client_id=${encodeURIComponent(clientId)}&` +
+                `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                `scope=${encodeURIComponent(scope)}&` +
+                `response_type=${encodeURIComponent(responseType)}&` +
+                `access_type=${encodeURIComponent(accessType)}&` +
+                `prompt=${encodeURIComponent(prompt)}`;
+            
+            console.log('Redirecting to Google OAuth URL:', googleAuthUrl);
+            window.location.href = googleAuthUrl;
+        }
+        
+        // Initialize when page loads - no Google library needed for redirect
+        window.onload = function() {
+            console.log('Login page loaded - Google redirect ready');
+            // Show the custom Google button
+            document.querySelector('.google-btn').style.display = 'flex';
         };
+        
+        // Add floating label animation
+        document.querySelectorAll('.form-floating input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+            
+            // Check if input has value on load
+            if (input.value) {
+                input.parentElement.classList.add('focused');
+            }
+        });
     </script>
     
 

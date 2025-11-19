@@ -15,6 +15,79 @@
         </div>
     </div>
 
+    <!-- E-Letter Confirmation Banner -->
+    <div id="eletter-confirmation-banner" class="d-none">
+        <div class="banner-content">
+            <button class="btn-close-modal" id="btn-cancel-eletter">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2><i class="fas fa-clock"></i> E-Letter Delivery Notice</h2>
+            <p>Your E-Letter will be delivered in <strong>24 hours</strong>. You can edit it before delivery by clicking the edit icon.</p>
+            <div class="banner-actions">
+                <button class="btn-boost-delivery" id="boost-delivery-btn">
+                    <i class="fas fa-bolt"></i> Boost Delivery (1h)
+                </button>
+                <button class="btn-confirm-eletter" id="btn-confirm-eletter">
+                    <i class="fas fa-check"></i> Send E-Letter
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boost Delivery Banner -->
+    <div id="boost-delivery-banner" class="d-none">
+        <div class="banner-content">
+            <h2><i class="fas fa-bolt"></i> Boost Delivery</h2>
+            <p>You don't have any boosts! Purchase boosts in the marketplace to speed up delivery to <strong>1 hour</strong>.</p>
+            <div class="banner-actions">
+                <button class="btn-cancel-boost" id="btn-cancel-boost">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-buy-boosts" id="btn-buy-boosts">
+                    <i class="fas fa-shopping-cart"></i> Buy Boosts
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium Edit Banner -->
+    <div id="premium-edit-banner" class="d-none">
+        <div class="banner-content">
+            <button class="btn-close-modal" id="btn-cancel-premium-edit">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2><i class="fas fa-crown"></i> Premium Feature</h2>
+            <p>Only <strong>Premium users</strong> can edit messages after they've been sent. Upgrade to Premium to unlock this feature!</p>
+            <div class="banner-actions">
+                <button class="btn-cancel-premium-edit" id="btn-cancel-premium-edit-2">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-upgrade-premium" id="btn-upgrade-premium">
+                    <i class="fas fa-crown"></i> Get Premium
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Physical Letter Confirmation Banner -->
+    <div id="letter-confirmation-banner" class="d-none">
+        <div class="banner-content">
+            <button class="btn-close-modal" id="btn-cancel-letter">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2><i class="fas fa-paper-plane"></i> Send Physical Letter?</h2>
+            <p>Are you sure you want to send this as a <strong>physical letter</strong>? This will use 1 letter credit and the letter will be printed and shipped to the recipient.</p>
+            <div class="banner-actions">
+                <button class="btn-cancel-letter" id="btn-cancel-letter-confirm">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn-confirm-letter" id="btn-confirm-letter">
+                    <i class="fas fa-check"></i> Yes, Send Letter
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="writing-container">
         <div class="writing-panel">
             <h2>Write a Letter</h2>
@@ -34,6 +107,7 @@
                     <small>Content safety filter. You can disable it for yourself, but other users can still enforce it on messages sent to them.</small>
                 </div>
             </div>
+
 
             <div class="suggestions-panel">
                 <h5>Need help starting? Try one of these:</h5>

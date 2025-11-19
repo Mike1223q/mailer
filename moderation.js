@@ -9,9 +9,7 @@ const DISCOVERY_URL = 'https://commentanalyzer.googleapis.com/$discovery/rest?ve
 const THRESHOLDS = {
     TOXICITY: 0.7,
     SEVERE_TOXICITY: 0.6,
-    THREAT: 0.8,
-    SEXUALLY_EXPLICIT: 0.7,
-    INSULT: 0.75
+    THREAT: 0.8
 };
 
 async function isContentAppropriate(text) {
@@ -19,19 +17,21 @@ async function isContentAppropriate(text) {
         return true;
     }
 
+    // Use only the most universally supported attributes that work with all languages
+    const requestedAttributes = { 
+        TOXICITY: {}, 
+        SEVERE_TOXICITY: {}, 
+        THREAT: {}
+    };
+
     // We wrap the logic in a Promise to maintain the async/await structure in our routes.
     return new Promise((resolve, reject) => {
         google.discoverAPI(DISCOVERY_URL)
             .then(client => {
                 const analyzeRequest = {
                     comment: { text: text },
-                    requestedAttributes: { 
-                        TOXICITY: {}, 
-                        SEVERE_TOXICITY: {}, 
-                        THREAT: {},
-                        SEXUALLY_EXPLICIT: {},
-                        INSULT: {}
-                    }
+                    requestedAttributes: requestedAttributes
+                    // Removed languages parameter to let API auto-detect
                 };
 
                 client.comments.analyze({
@@ -48,9 +48,7 @@ async function isContentAppropriate(text) {
                     const isUnacceptable = 
                         scores.TOXICITY.summaryScore.value > THRESHOLDS.TOXICITY ||
                         scores.SEVERE_TOXICITY.summaryScore.value > THRESHOLDS.SEVERE_TOXICITY ||
-                        scores.THREAT.summaryScore.value > THRESHOLDS.THREAT ||
-                        scores.SEXUALLY_EXPLICIT.summaryScore.value > THRESHOLDS.SEXUALLY_EXPLICIT ||
-                        scores.INSULT.summaryScore.value > THRESHOLDS.INSULT;
+                        scores.THREAT.summaryScore.value > THRESHOLDS.THREAT;
 
                     // Resolve with true if clean, false if flagged
                     resolve(!isUnacceptable);

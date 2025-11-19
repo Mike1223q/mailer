@@ -162,11 +162,11 @@ db.get("SELECT * FROM users WHERE email = ?", [email], async (err, row) => {
 });
   
 
-app.get("/register-page", (req, res) => {
+app.get("/register", (req, res) => {
   res.render("register-page");
 });
 
-app.get("/login-page", (req, res) => {
+app.get("/login", (req, res) => {
     res.render("login-page");
   });
   

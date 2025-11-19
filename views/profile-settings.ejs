@@ -474,7 +474,7 @@
                 
                 <div class="profile-header">
                     <div class="avatar-container" id="avatar-container">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop" alt="Profile Avatar" class="profile-avatar" id="profile-avatar">
+                        <img src="/media/unverifiedUser.jpg" alt="Profile Avatar" class="profile-avatar" id="profile-avatar">
                         <div class="avatar-overlay">
                             <i class="fas fa-camera fa-2x"></i>
                         </div>
@@ -591,7 +591,7 @@
             // --- Global State ---
             let userInterests = [];
             let selectedGender = null;
-            let selectedAvatarUrl = 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop';
+            let selectedAvatarUrl = '/media/unverifiedUser.jpg';
             const ALL_INTERESTS = [
                 "🎵 Music", "⚽ Sports", "✈️ Travel", "🏋️ Fitness", "🎬 Movies", "📺 TV Shows",
                 "📖 Reading", "✍️ Writing", "🎨 Art", "📸 Photography", "👨‍🍳 Cooking", "🧁 Baking",
@@ -613,8 +613,25 @@
                 "📚 Philosophy", "🧩 Psychology", "👶 Parenting", "👨‍👩‍👧 Family", "🐕 Pets & Animals", "🎎 Culture",
                 "🌐 Travel Blogging", "🏝️ Luxury Travel", "🧗 Adventure Travel", "🍽️ Foodie Life"
             ];  
-            const MALE_AVATARS = ['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop', 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&auto=format&fit=crop', 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=200&auto=format&fit=crop'];
-            const FEMALE_AVATARS = ['https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop'];
+
+            /**
+             * Generates an array of paths like: 
+             * ['/avatars/male/avatar01.jpg', '/avatars/male/avatar02.jpg', ...]
+             */
+            function generateAvatarPaths(count, genderFolder, extension) {
+            const paths = [];
+            for (let i = 1; i <= count; i++) {
+                // Pads the number 'i' with a leading zero if it's less than 10
+                const numberString = i.toString().padStart(2, '0'); 
+                
+                // Construct the full path
+                const path = `/media/avatars/${genderFolder}/avatar${numberString}.${extension}`;
+                paths.push(path);
+            }
+            return paths;
+            }
+            const MALE_AVATARS = generateAvatarPaths(5, 'male', 'jpg');
+            const FEMALE_AVATARS = generateAvatarPaths(5, 'female', 'jpg');
             let tempSelectedInterests = [];
             let debounceTimer;
 
@@ -690,7 +707,7 @@
             
             const populateForm = (userData) => {
                 // NEW: Populate sidebar
-                document.getElementById('sidebar-avatar').src = userData.avatar || 'https://placehold.co/60x60/FFFFFF/000000?text=User';
+                document.getElementById('sidebar-avatar').src = userData.avatar || '/media/unverifiedUser.jpg';
                 document.getElementById('sidebar-name').textContent = userData.name || 'User';
                 
                 // Apply premium gradient to sidebar name if user has premium
@@ -730,7 +747,7 @@
                 }
                 
                 selectedGender = userData.gender || null;
-                selectedAvatarUrl = userData.avatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop';
+                selectedAvatarUrl = userData.avatar || '/media/unverifiedUser.jpg';
                 profileAvatar.src = selectedAvatarUrl;
                 genderOptions.forEach(opt => {
                     opt.classList.remove('selected');
@@ -945,7 +962,7 @@
                 if (!response.ok) {
                     if (response.status === 401) {
                         console.log('User not authenticated, redirecting to login');
-                        window.location.href = '/login-page';
+                        window.location.href = '/login';
                         return;
                     }
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -988,7 +1005,7 @@
                     showToast('Network error. Please check your connection and refresh the page.');
                 } else if (error.message && error.message.includes('401')) {
                     console.log('Authentication error, redirecting to login');
-                    window.location.href = '/login-page';
+                    window.location.href = '/login';
                 } else {
                     showToast('Failed to load profile. Please refresh the page.');
                 }
@@ -997,4 +1014,4 @@
     </script>
 
 </body>
-</ht
+</html>

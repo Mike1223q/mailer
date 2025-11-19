@@ -36,6 +36,83 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 3000);
     };
 
+    // Function to calculate delivery countdown
+    const getDeliveryCountdown = (deliveryTime, messageType) => {
+        if (!deliveryTime) return null;
+        
+        const now = new Date();
+        const delivery = new Date(deliveryTime);
+        const timeLeft = delivery - now;
+        
+        if (timeLeft <= 0) return null; // Already delivered
+        
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        
+        if (hours > 0) {
+            return `${hours} hour${hours === 1 ? '' : 's'} left`;
+        } else if (minutes > 0) {
+            return `${minutes} minute${minutes === 1 ? '' : 's'} left`;
+        } else {
+            return 'Arriving soon';
+        }
+    };
+
+    // Function to show premium edit banner
+    window.showPremiumEditBanner = () => {
+        const banner = document.getElementById('premium-edit-banner');
+        
+        if (banner) {
+            banner.classList.remove('d-none');
+            
+            // Add event listeners for banner buttons
+            const cancelBtn = document.getElementById('btn-cancel-premium-edit');
+            const upgradeBtn = document.getElementById('btn-upgrade-premium');
+            
+            const closeBanner = () => {
+                banner.classList.add('d-none');
+            };
+            
+            if (cancelBtn) cancelBtn.onclick = closeBanner;
+            if (upgradeBtn) upgradeBtn.onclick = () => {
+                closeBanner();
+                window.location.href = '/marketplace';
+            };
+        }
+    };
+
+    // Function to edit message
+    window.editMessage = async (messageId, messageContent, recipientId) => {
+        // Check if user has premium
+        try {
+            const response = await fetch('/api/user/status');
+            
+            if (response.ok) {
+                const userData = await response.json();
+                
+                if (!userData.premium) {
+                    // Show premium edit banner
+                    showPremiumEditBanner();
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Error checking premium status:', error);
+            showToast('Unable to verify premium status. Please try again.');
+            return;
+        }
+        
+        // Get recipient name from the chat header
+        const recipientName = document.getElementById('chat-user-name')?.textContent || 'Unknown User';
+        
+        // Encode the content for URL
+        const encodedContent = encodeURIComponent(messageContent);
+        const encodedName = encodeURIComponent(recipientName);
+        
+        // Redirect to writing page in edit mode
+        window.location.href = `/writing?action=email&userId=${recipientId}&name=${encodedName}&edit=true&messageId=${messageId}&content=${encodedContent}`;
+    };
+
 
     // --- PAGE DETECTION & LOGIC ---
 
@@ -55,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const sidebarAvatar = document.getElementById('sidebar-avatar');
             const sidebarName = document.getElementById('sidebar-name');
             if (sidebarAvatar && sidebarName) {
-                sidebarAvatar.src = currentUser.avatar || 'https://placehold.co/60x60/FFFFFF/000000?text=User';
+                sidebarAvatar.src = currentUser.avatar || '/media/unverifiedUser.jpg';
                 sidebarName.textContent = currentUser.name || 'User';
                 
                 // Apply premium gradient to sidebar name if user has premium
@@ -113,9 +190,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const updateCardContent = (profile) => {
                     if (!profile) return;
 
-                    console.log('Updating card content for profile:', profile);
-                    console.log('Profile premium status:', profile.isPremium);
-
                     const interestsHTML = Array.isArray(profile.interests)
                         ? profile.interests.map(interest => `<span class="interest-tag">${interest}</span>`).join('')
                         : ''; 
@@ -135,7 +209,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                         <div class="profile-card-actions">
                             <button class="action-btn" data-user-id="${profile.id}" data-action="email">
-                                <i class="fas fa-envelope"></i> Email
+                                <i class="fas fa-envelope"></i> E-Letter
                             </button>
                             <button class="action-btn" data-user-id="${profile.id}" data-action="letter">
                                 <i class="fas fa-paper-plane"></i> Letter
@@ -151,15 +225,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <h4>Find New Matches</h4>
                             <p>Your next batch of profiles will be ready in <strong>${timeLeftForNewMatches}</strong>.</p>
                             <button id="purchase-matches-btn">
-                                <i class="fas fa-coins"></i> 100 Coins to Get One Now
+                                <i class="fas fa-coins"></i> 50 Coins to Get One Now
                             </button>
                         `;
                     } else {
                         cardContentHTML = `
                             <h4>Out of Matches</h4>
-                            <p>Your next free batch arrives in <strong>${timeLeftForNewMatches}</strong>. Get 100+ new matches every week with Premium, or get a new one now.</p>
+                            <p>Your next free batch arrives in <strong>${timeLeftForNewMatches}</strong>. Get 70+ new matches every week with Premium, or get a new one now.</p>
                             <button id="purchase-matches-btn">
-                                <i class="fas fa-coins"></i> 100 Coins
+                                <i class="fas fa-coins"></i> 50 Coins
                             </button>
                             <a href="/subscribe" class="btn-premium-offer">Go Premium</a>
                         `;
@@ -195,12 +269,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         } else {
                             showToast(data.error || 'Purchase failed.');
                             button.disabled = false;
-                            button.innerHTML = '<i class="fas fa-coins"></i> 100 Coins';
+                            button.innerHTML = '<i class="fas fa-coins"></i> 50 Coins';
                         }
                     } catch (error) {
                         showToast('An error occurred. Please try again.');
                         button.disabled = false;
-                        button.innerHTML = '<i class="fas fa-coins"></i> 100 Coins';
+                        button.innerHTML = '<i class="fas fa-coins"></i> 50 Coins';
                     }
                 };
 
@@ -314,6 +388,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+
     // 2. Check if we are on the LETTER WRITING page
     if (document.getElementById('letter-body')) {
         let currentUser;
@@ -326,6 +401,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const sendButton = document.querySelector('.btn-send');
         const saveButton = document.querySelector('.btn-save');
         const safesendToggle = document.getElementById('safesend-toggle');
+        
 
         // Load SafeSend preferences
         const loadSafeSendPreferences = async () => {
@@ -398,7 +474,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         const recipientName = urlParams.get('name') || 'User';
         const action = urlParams.get('action') || 'letter'; // Default to letter if not specified
         const recipientId = urlParams.get('userId');
+        const isEditMode = urlParams.get('edit') === 'true';
+        const messageId = urlParams.get('messageId');
+        const editContent = urlParams.get('content');
         document.getElementById('recipient-name').textContent = recipientName;
+
+        // Handle edit mode
+        if (isEditMode && editContent) {
+            letterBody.value = decodeURIComponent(editContent);
+            originalContent = letterBody.value;
+            
+            // Update page title and button text for edit mode
+            document.querySelector('h2').textContent = 'Edit E-Letter';
+            sendButton.innerHTML = 'Update E-Letter <i class="fas fa-save"></i>';
+            sendButton.textContent = 'Update E-Letter';
+            
+            // Hide delivery confirmation banner in edit mode
+            const eletterBanner = document.getElementById('eletter-confirmation-banner');
+            if (eletterBanner) {
+                eletterBanner.classList.add('d-none');
+            }
+        }
 
         // Function to load draft
         const loadDraft = async () => {
@@ -430,12 +526,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Load draft when page loads
         loadDraft();
 
-        // Update send button text based on action type
+        // Update send button text based on action type (skip if in edit mode)
         const sendBtn = document.getElementById('send-btn');
-        if (sendBtn) {
+        if (sendBtn && !isEditMode) {
             if (action === 'email') {
-                sendBtn.textContent = 'Send Email ';
-                sendBtn.innerHTML = 'Send Email <i class="fas fa-envelope"></i>';
+                sendBtn.textContent = 'Send E-Letter ';
+                sendBtn.innerHTML = 'Send E-Letter <i class="fas fa-envelope"></i>';
             } else {
                 sendBtn.textContent = 'Send Letter ';
                 sendBtn.innerHTML = 'Send Letter <i class="fas fa-paper-plane"></i>';
@@ -453,7 +549,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const sidebarPremiumBadge = document.getElementById('sidebar-premium-badge');
                     
                     if (sidebarAvatar) {
-                        sidebarAvatar.src = userData.avatar || 'https://placehold.co/60x60/FFFFFF/000000?text=User';
+                        sidebarAvatar.src = userData.avatar || '/media/unverifiedUser.jpg';
                     }
                     if (sidebarName) {
                         sidebarName.textContent = userData.name || 'User';
@@ -601,6 +697,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 sendButton.style.opacity = '0.7';
             }
 
+            // Boost button will be shown in the E-Letter confirmation popup
+
             sendButton.addEventListener('click', async () => {
                 // Only check letter credits if the action is 'letter'
                 if (action === 'letter' && !currentUser.letterCredits) {
@@ -613,14 +711,144 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return;
                 }
 
+                // In edit mode, send directly without confirmation banner
+                if (isEditMode) {
+                    await sendMessage();
+                    return;
+                }
+
+                // Show confirmation banner for E-Letters
+                if (action === 'email') {
+                    showELetterConfirmation();
+                    return;
+                }
+
+                // Show confirmation banner for physical letters
+                if (action === 'letter') {
+                    showLetterConfirmation();
+                    return;
+                }
+
+                // For other actions, send directly
+                await sendMessage();
+            });
+
+            // Boost button event listener is now added when E-Letter popup is shown
+
+            // Function to show E-Letter confirmation banner
+            const showELetterConfirmation = () => {
+                const banner = document.getElementById('eletter-confirmation-banner');
+                banner.classList.remove('d-none');
+                
+                // Update boost button text based on current boost count
+                const boostButton = document.getElementById('boost-delivery-btn');
+                if (boostButton) {
+                    if (currentUser.boosts > 0) {
+                        boostButton.textContent = `Boost Delivery (1h) - ${currentUser.boosts} left`;
+                        boostButton.style.opacity = '1';
+                    } else {
+                        boostButton.textContent = 'Boost Delivery (1h) - No boosts';
+                        boostButton.style.opacity = '0.6';
+                    }
+                    
+                    // Add boost button event listener
+                    boostButton.onclick = async () => {
+                        if (letterBody.value.trim() === '') {
+                            showToast('Your message cannot be empty.');
+                            return;
+                        }
+
+                        // Check if user has boosts
+                        if (currentUser.boosts <= 0) {
+                            showBoostDeliveryBanner();
+                            return;
+                        }
+
+                        // Show boost confirmation
+                        showBoostConfirmation();
+                    };
+                }
+                
+                // Add event listeners for banner buttons
+                const cancelBtn = document.getElementById('btn-cancel-eletter');
+                const confirmBtn = document.getElementById('btn-confirm-eletter');
+                
+                const closeBanner = () => {
+                    banner.classList.add('d-none');
+                };
+                
+                cancelBtn.onclick = closeBanner;
+                confirmBtn.onclick = async () => {
+                    closeBanner();
+                    await sendMessage();
+                };
+            };
+
+            // Function to show physical letter confirmation banner
+            const showLetterConfirmation = () => {
+                const banner = document.getElementById('letter-confirmation-banner');
+                banner.classList.remove('d-none');
+                
+                // Add event listeners for banner buttons
+                const cancelBtn = document.getElementById('btn-cancel-letter-confirm');
+                const confirmBtn = document.getElementById('btn-confirm-letter');
+                const closeBtn = document.getElementById('btn-cancel-letter');
+                
+                const closeBanner = () => {
+                    banner.classList.add('d-none');
+                };
+                
+                cancelBtn.onclick = closeBanner;
+                closeBtn.onclick = closeBanner;
+                confirmBtn.onclick = async () => {
+                    closeBanner();
+                    await sendMessage();
+                };
+            };
+
+            // Function to show boost confirmation
+            const showBoostConfirmation = () => {
+                const confirmed = confirm(`Use 1 boost to deliver this E-Letter in 1 hour instead of 24 hours?\n\nYou have ${currentUser.boosts} boosts remaining.`);
+                if (confirmed) {
+                    sendMessageWithBoost();
+                }
+            };
+
+            // Function to show boost delivery banner (no boosts)
+            const showBoostDeliveryBanner = () => {
+                const banner = document.getElementById('boost-delivery-banner');
+                banner.classList.remove('d-none');
+                
+                // Add event listeners for banner buttons
+                const cancelBtn = document.getElementById('btn-cancel-boost');
+                const buyBtn = document.getElementById('btn-buy-boosts');
+                
+                const closeBanner = () => {
+                    banner.classList.add('d-none');
+                };
+                
+                cancelBtn.onclick = closeBanner;
+                buyBtn.onclick = () => {
+                    closeBanner();
+                    window.location.href = '/marketplace';
+                };
+            };
+
+
+            // Function to send message with boost
+            const sendMessageWithBoost = async () => {
                 try {
-                    sendButton.disabled = true;
-                    sendButton.textContent = 'Sending...';
+                    const boostButton = document.getElementById('boost-delivery-btn');
+                    if (boostButton) {
+                        boostButton.disabled = true;
+                        boostButton.textContent = 'Sending with Boost...';
+                    }
                     
                     const sendData = {
                         content: letterBody.value,
                         recipientId: recipientId,
-                        messageType: action
+                        messageType: action,
+                        useBoost: true
                     };
 
                     const response = await fetch('/api/send-message', {
@@ -634,31 +862,129 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const data = await response.json();
 
                     if (response.ok) {
-                        const messageType = action === 'email' ? 'Email' : 'Letter';
-                        showToast(`${messageType} sent successfully!`);
+                        showToast('E-Letter sent with boost! Will be delivered in 1 hour! ⚡');
+                        
+                        // Update user's boost count
+                        currentUser.boosts = currentUser.boosts - 1;
+                        if (currentUser.boosts > 0) {
+                            boostButton.textContent = `Boost Delivery (1h) - ${currentUser.boosts} left`;
+                        } else {
+                            boostButton.style.display = 'none';
+                        }
                         
                         // Redirect to chats page
                         setTimeout(() => {
                             window.location.href = `/chats?id=${recipientId}`;
                         }, 1500);
                     } else {
-                        if (response.status === 402) {
-                            showToast('Insufficient letter credits. Please purchase more credits.');
-                        } else if (data.safesendBlocked) {
+                        if (data.safesendBlocked) {
                             showToast('SafeSend blocked your message due to inappropriate content. Even if you disabled SafeSend, the recipient has it enabled, so all messages sent to them are filtered for safety.');
                         } else {
                             showToast(data.error || 'Failed to send message.');
                         }
                     }
                 } catch (error) {
-                    console.error('Send error:', error);
+                    console.error('Send with boost error:', error);
                     showToast('Failed to send message. Please try again.');
                 } finally {
-                    sendButton.disabled = false;
-                    sendButton.textContent = action === 'email' ? 'Send Email' : 'Send Letter';
-                    sendButton.innerHTML = action === 'email' ? 'Send Email <i class="fas fa-envelope"></i>' : 'Send Letter <i class="fas fa-paper-plane"></i>';
+                    const boostButton = document.getElementById('boost-delivery-btn');
+                    if (boostButton) {
+                        boostButton.disabled = false;
+                        if (currentUser.boosts > 0) {
+                            boostButton.textContent = `Boost Delivery (1h) - ${currentUser.boosts} left`;
+                        }
+                    }
                 }
-            });
+            };
+
+            // Function to actually send the message
+            const sendMessage = async () => {
+                try {
+                    sendButton.disabled = true;
+                    sendButton.textContent = isEditMode ? 'Updating...' : 'Sending...';
+                    
+                    if (isEditMode) {
+                        // Handle edit mode
+                        const editData = {
+                            messageId: messageId,
+                            content: letterBody.value
+                        };
+
+                        const response = await fetch('/api/edit-message', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(editData)
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            showToast('E-Letter updated successfully!');
+                            
+                            // Redirect back to chat
+                            setTimeout(() => {
+                                window.location.href = `/chat-view?id=${recipientId}`;
+                            }, 1500);
+                        } else {
+                            if (data.safesendBlocked) {
+                                showToast('SafeSend blocked your message due to inappropriate content. Even if you disabled SafeSend, the recipient has it enabled, so all messages sent to them are filtered for safety.');
+                            } else {
+                                showToast(data.error || 'Failed to update message.');
+                            }
+                        }
+                    } else {
+                        // Handle new message
+                        const sendData = {
+                            content: letterBody.value,
+                            recipientId: recipientId,
+                            messageType: action
+                        };
+
+                        const response = await fetch('/api/send-message', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(sendData)
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            const messageType = action === 'email' ? 'E-Letter' : 'Letter';
+                            showToast(`${messageType} sent successfully!`);
+                            
+                            // Redirect to chats page
+                            setTimeout(() => {
+                                window.location.href = `/chats?id=${recipientId}`;
+                            }, 1500);
+                        } else {
+                            if (response.status === 402) {
+                                showToast('Insufficient letter credits. Please purchase more credits.');
+                            } else if (data.safesendBlocked) {
+                                showToast('SafeSend blocked your message due to inappropriate content. Even if you disabled SafeSend, the recipient has it enabled, so all messages sent to them are filtered for safety.');
+                            } else {
+                                showToast(data.error || 'Failed to send message.');
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Send error:', error);
+                    showToast(isEditMode ? 'Failed to update message. Please try again.' : 'Failed to send message. Please try again.');
+                } finally {
+                    sendButton.disabled = false;
+                    if (isEditMode) {
+                        sendButton.textContent = 'Update E-Letter';
+                        sendButton.innerHTML = 'Update E-Letter <i class="fas fa-save"></i>';
+                    } else {
+                        sendButton.textContent = action === 'email' ? 'Send E-Letter' : 'Send Letter';
+                        sendButton.innerHTML = action === 'email' ? 'Send E-Letter <i class="fas fa-envelope"></i>' : 'Send Letter <i class="fas fa-paper-plane"></i>';
+                    }
+                }
+            };
+
 
         } catch (error) {
             console.error('Initialization Error:', error);
@@ -723,22 +1049,39 @@ document.addEventListener('DOMContentLoaded', async () => {
             const isOutgoing = currentUserId && lastMessage.senderId == currentUserId;
             const unreadCount = unreadCounts[chat.userId] ? unreadCounts[chat.userId].total : 0;
             
+            // Get delivery countdown for outgoing e-letters only (not regular letters)
+            const countdown = isOutgoing && lastMessage.messageType === 'email' 
+                ? getDeliveryCountdown(lastMessage.deliveryTime, lastMessage.messageType) 
+                : null;
+            
+            // Format message content based on type
+            let displayContent = lastMessage.content;
+            if (lastMessage.messageType === 'gift') {
+                try {
+                    const giftData = JSON.parse(lastMessage.content);
+                    displayContent = `🎁 Gift sent: ${giftData.amount} coins${giftData.message ? ` - "${giftData.message}"` : ''}`;
+                } catch (e) {
+                    displayContent = `🎁 Gift sent: ${lastMessage.content} coins`;
+                }
+            }
+            
             return `
                 <div class="chat-item ${unreadCount > 0 ? 'has-unread' : ''}" data-user-id="${chat.userId}">
                     <div class="chat-item-header">
-                        <img src="${chat.avatar || 'https://placehold.co/50x50/FFFFFF/000000?text=U'}" 
+                        <img src="${chat.avatar || '/media/unverifiedUser.jpg'}" 
                              alt="${chat.name}" class="chat-avatar">
                         <div class="chat-info">
                             <div class="chat-name">${chat.name}</div>
                             <div class="chat-last-message">
-                                ${isOutgoing ? 'You: ' : ''}${truncateMessage(lastMessage.content)}
+                                ${isOutgoing ? 'You: ' : ''}${truncateMessage(displayContent)}
                             </div>
                         </div>
                         <div class="chat-meta">
                             <div class="chat-time">${formatTime(lastMessage.timestamp)}</div>
                             <div class="chat-badges">
+                                ${countdown ? `<div class="chat-countdown">${countdown}</div>` : ''}
                                 <div class="chat-type-badge badge-${lastMessage.messageType}">
-                                    ${lastMessage.messageType}
+                                    ${lastMessage.messageType === 'email' ? 'E-Letter' : lastMessage.messageType === 'gift' ? 'Gift' : lastMessage.messageType}
                                 </div>
                                 ${unreadCount > 0 ? `<div class="chat-unread-badge">${unreadCount}</div>` : ''}
                             </div>
@@ -778,21 +1121,63 @@ document.addEventListener('DOMContentLoaded', async () => {
                 item.addEventListener('click', async () => {
                     const userId = item.dataset.userId;
                     
-                    // Mark messages as read before navigating
-                    try {
-                        await fetch(`/api/mark-as-read/${userId}`, {
-                            method: 'POST'
-                        });
-                        
-                        // Update sidebar notification badge
-                        updateSidebar();
-                    } catch (error) {
-                        console.error('Error marking messages as read:', error);
-                    }
-                    
+                    // Navigate to chat view without marking as read
+                    // Messages will be marked as read when actually viewed in chat-view
                     window.location.href = `/chat-view?id=${userId}`;
                 });
             });
+            
+            // Start countdown updates for chat list
+            startChatListCountdownUpdates(chats);
+        };
+
+        // Function to update countdown timers in chat list
+        const updateChatListCountdowns = (chats) => {
+            const countdownElements = document.querySelectorAll('.chat-countdown');
+            let hasActiveCountdowns = false;
+            
+            countdownElements.forEach((element, index) => {
+                const chatItem = element.closest('.chat-item');
+                const userId = chatItem.dataset.userId;
+                const chat = chats.find(c => c.userId == userId);
+                
+                if (chat && chat.messages.length > 0) {
+                    const lastMessage = chat.messages[chat.messages.length - 1];
+                    const currentUserId = window.currentUserId || null;
+                    const isOutgoing = currentUserId && lastMessage.senderId == currentUserId;
+                    
+                    if (isOutgoing && lastMessage.messageType === 'email') {
+                        const countdown = getDeliveryCountdown(lastMessage.deliveryTime, lastMessage.messageType);
+                        if (countdown) {
+                            element.textContent = countdown;
+                            hasActiveCountdowns = true;
+                        } else {
+                            element.remove(); // Remove countdown if delivered
+                        }
+                    }
+                }
+            });
+            
+            return hasActiveCountdowns;
+        };
+
+        // Function to start countdown updates for chat list
+        let chatListCountdownInterval;
+        const startChatListCountdownUpdates = (chats) => {
+            if (chatListCountdownInterval) {
+                clearInterval(chatListCountdownInterval);
+            }
+            
+            // Update every minute
+            chatListCountdownInterval = setInterval(() => {
+                const hasActiveCountdowns = updateChatListCountdowns(chats);
+                if (!hasActiveCountdowns) {
+                    clearInterval(chatListCountdownInterval);
+                }
+            }, 60000);
+            
+            // Initial update
+            updateChatListCountdowns(chats);
         };
 
         // Function to filter chats
@@ -843,17 +1228,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!chatHistoryResponse.ok) throw new Error('Could not fetch chat history');
                 const chatHistory = await chatHistoryResponse.json();
 
-                console.log('Chat history response:', chatHistory); // Debug log
-
                 // Process chat history into chat list
                 const chatHistoryData = chatHistory.chatHistory || {};
                 const chats = [];
 
-                console.log('Chat history data:', chatHistoryData); // Debug log
-
                 for (const [userId, messages] of Object.entries(chatHistoryData)) {
-                    console.log(`Processing user ${userId} with ${messages.length} messages`); // Debug log
-                    
                     if (messages && messages.length > 0) {
                         try {
                             // Get user info for this chat
@@ -866,16 +1245,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     avatar: userInfo.avatar,
                                     messages: messages
                                 });
-                            } else {
-                                console.log(`Failed to get user info for ${userId}`); // Debug log
                             }
                         } catch (userError) {
                             console.error(`Error getting user info for ${userId}:`, userError);
                         }
                     }
                 }
-
-                console.log('Processed chats:', chats); // Debug log
 
                 // Sort by most recent message
                 chats.sort((a, b) => {
@@ -905,7 +1280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const sidebarPremiumBadge = document.getElementById('sidebar-premium-badge');
                     
                     if (sidebarAvatar) {
-                        sidebarAvatar.src = userData.avatar || 'https://placehold.co/60x60/FFFFFF/000000?text=User';
+                        sidebarAvatar.src = userData.avatar || '/media/unverifiedUser.jpg';
                     }
                     if (sidebarName) {
                         sidebarName.textContent = userData.name || 'User';
@@ -967,21 +1342,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Refresh chats when page becomes visible (user navigates back)
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
-                console.log('Page became visible, refreshing chats...');
                 loadChats();
             }
         });
 
         // Also refresh on page focus (when user clicks back to tab)
         window.addEventListener('focus', () => {
-            console.log('Window focused, refreshing chats...');
             loadChats();
         });
 
         // Refresh when user navigates back to the page
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
-                console.log('Page loaded from back-forward cache, refreshing chats...');
                 loadChats();
             }
         });
@@ -993,6 +1365,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let otherUserId = null;
         let otherUserName = '';
         let otherUserAvatar = '';
+        let currentMessages = [];
         
         const messagesContainer = document.getElementById('messages-container');
         const writeEmailButton = document.getElementById('btn-write-email');
@@ -1024,14 +1397,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         };
 
+
         // Function to create message HTML
         const createMessageHTML = (message, isOutgoing) => {
             const messageClass = isOutgoing ? 'outgoing' : 'incoming';
             const messageTime = formatMessageTime(message.timestamp);
             
+            // Get delivery countdown for outgoing e-letters only (not regular letters)
+            const countdown = isOutgoing && message.messageType === 'email' 
+                ? getDeliveryCountdown(message.deliveryTime, message.messageType) 
+                : null;
+            
+            // Check if message can be edited (outgoing e-letter that hasn't been delivered yet)
+            const canEdit = isOutgoing && message.messageType === 'email' && countdown;
+            
             // Format message content (handle basic markdown-like formatting)
             let formattedContent = message.content;
-            if (message.messageType === 'letter' || message.messageType === 'email') {
+            let isGiftMessage = false;
+            
+            if (message.messageType === 'gift') {
+                isGiftMessage = true;
+                try {
+                    const giftData = JSON.parse(message.content);
+                    formattedContent = `🎁 Gift sent: ${giftData.amount} coins${giftData.message ? `\n\n"${giftData.message}"` : ''}`;
+                } catch (e) {
+                    formattedContent = `🎁 Gift sent: ${message.content} coins`;
+                }
+            } else if (message.messageType === 'letter' || message.messageType === 'email') {
                 // Convert markdown-like formatting to HTML
                 formattedContent = message.content
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -1040,12 +1432,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             
             return `
-                <div class="message ${messageClass} ${message.messageType === 'letter' ? 'letter-message' : ''} ${message.messageType === 'email' ? 'email-message' : ''}">
+                <div class="message ${messageClass} ${message.messageType === 'letter' ? 'letter-message' : ''} ${message.messageType === 'email' ? 'email-message' : ''} ${isGiftMessage ? 'gift-message' : ''}">
                     <div class="message-content">
+                        ${canEdit ? `<div class="message-edit-btn" onclick="editMessage(${message.id}, '${message.content.replace(/'/g, "\\'")}', '${message.recipientId}')" title="Edit message">
+                            <i class="fas fa-edit"></i>
+                        </div>` : ''}
                         <div class="message-text">${formattedContent}</div>
                         <div class="message-meta">
                             <span class="message-time">${messageTime}</span>
-                            <span class="message-type-badge badge-${message.messageType}">${message.messageType}</span>
+                            ${countdown ? `<span class="delivery-countdown">${countdown}</span>` : ''}
+                            <span class="message-type-badge badge-${message.messageType}">${message.messageType === 'email' ? 'E-Letter' : message.messageType === 'gift' ? 'Gift' : message.messageType}</span>
                         </div>
                     </div>
                 </div>
@@ -1054,6 +1450,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Function to render messages
         const renderMessages = (messages) => {
+            currentMessages = messages; // Store messages for countdown updates
+            
             if (messages.length === 0) {
                 messagesContainer.innerHTML = `
                     <div class="no-messages">
@@ -1076,6 +1474,54 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             // Scroll to bottom
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Start countdown updates
+            startCountdownUpdates();
+        };
+
+        // Function to update countdown timers
+        const updateCountdowns = () => {
+            if (!currentMessages || currentMessages.length === 0) return;
+            
+            const countdownElements = document.querySelectorAll('.delivery-countdown');
+            let hasActiveCountdowns = false;
+            
+            countdownElements.forEach((element, index) => {
+                // Find the corresponding message
+                const message = currentMessages.find(msg => {
+                    const isOutgoing = msg.senderId == currentUserId;
+                    return isOutgoing && msg.messageType === 'email';
+                });
+                
+                if (message && message.deliveryTime) {
+                    const countdown = getDeliveryCountdown(message.deliveryTime, message.messageType);
+                    if (countdown) {
+                        element.textContent = countdown;
+                        hasActiveCountdowns = true;
+                    } else {
+                        element.remove(); // Remove countdown if delivered
+                    }
+                }
+            });
+            
+            // Stop updating if no active countdowns
+            if (!hasActiveCountdowns) {
+                clearInterval(countdownInterval);
+            }
+        };
+
+        // Function to start countdown updates
+        let countdownInterval;
+        const startCountdownUpdates = () => {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            // Update every minute
+            countdownInterval = setInterval(updateCountdowns, 60000);
+            
+            // Initial update
+            updateCountdowns();
         };
 
 
@@ -1103,7 +1549,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (response.ok) {
                     const userInfo = await response.json();
                     otherUserName = userInfo.firstName || 'Unknown User';
-                    otherUserAvatar = userInfo.avatar || 'https://placehold.co/50x50/FFFFFF/000000?text=U';
+                    otherUserAvatar = userInfo.avatar || '/media/unverifiedUser.jpg';
                     
                     // Update UI
                     chatUserName.textContent = otherUserName;
@@ -1124,6 +1570,131 @@ document.addEventListener('DOMContentLoaded', async () => {
             const recipientName = encodeURIComponent(chatUserName.textContent);
             window.location.href = `/writing?action=letter&userId=${otherUserId}&name=${recipientName}`;
         });
+
+        // Gift Modal Functions (for chat interface)
+        const showGiftModal = () => {
+            const recipientName = document.getElementById('chat-user-name')?.textContent || 'this user';
+            const modal = document.createElement('div');
+            modal.className = 'gift-modal-overlay';
+            modal.innerHTML = `
+                <div class="gift-modal">
+                    <div class="gift-modal-header">
+                        <h3><i class="fas fa-gift"></i> Send Gift</h3>
+                        <button class="gift-modal-close">&times;</button>
+                    </div>
+                    <div class="gift-modal-body">
+                        <p>Send coins as a gift to <strong>${recipientName}</strong></p>
+                        <div class="gift-amounts">
+                            <button class="gift-amount-btn" data-amount="10">10 Coins</button>
+                            <button class="gift-amount-btn" data-amount="25">25 Coins</button>
+                            <button class="gift-amount-btn" data-amount="50">50 Coins</button>
+                            <button class="gift-amount-btn" data-amount="100">100 Coins</button>
+                        </div>
+                        <div class="gift-custom">
+                            <label>Custom Amount:</label>
+                            <input type="text" id="custom-gift-amount" placeholder="Enter amount">
+                        </div>
+                    </div>
+                    <div class="gift-modal-footer">
+                        <button class="btn-cancel-gift">Cancel</button>
+                        <button class="btn-send-gift-confirm" disabled>Send Gift</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Event listeners for gift modal
+            const closeModal = () => {
+                document.body.removeChild(modal);
+            };
+            
+            modal.querySelector('.gift-modal-close').addEventListener('click', closeModal);
+            modal.querySelector('.btn-cancel-gift').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+            
+            // Gift amount selection
+            let selectedAmount = 0;
+            const amountButtons = modal.querySelectorAll('.gift-amount-btn');
+            const customInput = modal.querySelector('#custom-gift-amount');
+            const sendButton = modal.querySelector('.btn-send-gift-confirm');
+            
+            amountButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    amountButtons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedAmount = parseInt(btn.dataset.amount);
+                    customInput.value = '';
+                    sendButton.disabled = false;
+                });
+            });
+            
+            customInput.addEventListener('input', () => {
+                // Remove any non-numeric characters
+                customInput.value = customInput.value.replace(/[^0-9]/g, '');
+                
+                amountButtons.forEach(b => b.classList.remove('selected'));
+                selectedAmount = parseInt(customInput.value) || 0;
+                
+                sendButton.disabled = selectedAmount <= 0;
+            });
+            
+            // Send gift
+            sendButton.addEventListener('click', async () => {
+                if (selectedAmount <= 0) return;
+                
+                await sendGift(selectedAmount);
+                closeModal();
+            });
+        };
+        
+        const sendGift = async (amount) => {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const recipientId = urlParams.get('id');
+                
+                if (!recipientId) {
+                    showToast('Recipient not found');
+                    return;
+                }
+                
+                const response = await fetch('/api/send-gift', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        recipientId: recipientId,
+                        amount: amount,
+                        message: ''
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showToast(`🎁 Gift of ${amount} coins sent successfully!`);
+                    // Refresh messages to show the gift
+                    loadMessages();
+                } else {
+                    showToast(data.error || 'Failed to send gift');
+                }
+            } catch (error) {
+                console.error('Error sending gift:', error);
+                showToast('Failed to send gift. Please try again.');
+            }
+        };
+
+        // Send Gift functionality
+        const sendGiftButton = document.getElementById('btn-send-gift');
+        if (sendGiftButton) {
+            sendGiftButton.addEventListener('click', () => {
+                showGiftModal();
+            });
+        }
+
 
         // Initialize chat view
         const initializeChatView = async () => {
@@ -1170,7 +1741,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const sidebarName = document.getElementById('sidebar-name');
                     
                     if (sidebarAvatar) {
-                        sidebarAvatar.src = userData.avatar || 'https://placehold.co/60x60/FFFFFF/000000?text=User';
+                        sidebarAvatar.src = userData.avatar || '/media/unverifiedUser.jpg';
                     }
                     if (sidebarName) {
                         sidebarName.textContent = userData.name || 'User';
@@ -1212,7 +1783,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let currentUser = null;
 
         // Load user balance and update display
-        const loadUserBalance = async () => {
+        window.loadUserBalance = async () => {
             try {
                 const response = await fetch('/api/user/status');
                 if (response.ok) {
@@ -1229,6 +1800,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (letterCreditsElement) {
                         letterCreditsElement.textContent = `${currentUser.letterCredits || 0} Letter Credits`;
                     }
+                    
+                    // Update boosts balance
+                    const boostsElement = document.getElementById('current-boosts');
+                    if (boostsElement) {
+                        boostsElement.textContent = `${currentUser.boosts || 0} Boosts`;
+                    }
                 }
             } catch (error) {
                 console.error('Error loading user balance:', error);
@@ -1236,39 +1813,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         // Watch ad functionality
-        const watchAdButton = document.getElementById('btn-watch-ad');
-        if (watchAdButton) {
-            watchAdButton.addEventListener('click', async () => {
-                watchAdButton.disabled = true;
-                watchAdButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Watching...';
-                
-                try {
-                    // Simulate ad watching (in real app, this would integrate with ad service)
-                    await new Promise(resolve => setTimeout(resolve, 3000));
-                    
-                    // Add coins to user account
-                    const response = await fetch('/api/watch-ad', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        showToast('🎉 You earned 100 coins!');
-                        await loadUserBalance(); // Refresh balance
-                    } else {
-                        showToast('Failed to earn coins. Please try again.');
-                    }
-                } catch (error) {
-                    console.error('Error watching ad:', error);
-                    showToast('Error watching ad. Please try again.');
-                } finally {
-                    watchAdButton.disabled = false;
-                    watchAdButton.innerHTML = '<i class="fas fa-play"></i> Watch Ad';
-                }
-            });
-        }
+        // Watch Ad button is handled by Unity Ads system below
 
         // Buy package functionality
         document.querySelectorAll('.btn-buy-package').forEach(button => {
@@ -1281,56 +1826,137 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const itemName = isCredits ? 'letter credits' : 'coins';
                 const itemText = isCredits ? `${amount} letter credits` : `${amount} coins`;
                 
-                if (confirm(`Purchase ${itemText} for $${price}?`)) {
-                    button.disabled = true;
+                try {
+                    // Show loading state
+                    const originalText = button.innerHTML;
                     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    button.disabled = true;
                     
-                    try {
-                        // In real app, this would integrate with payment processor
-                        showToast(`💳 Processing payment for ${itemText}...`);
+                    showToast(`💳 Creating secure payment session...`);
+                    
+                    const itemType = isCredits ? 'credits' : 'coins';
+                    
+                    // Create Stripe checkout session
+                    const response = await fetch('/api/create-one-time-checkout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            packageType: packageType,
+                            amount: amount,
+                            price: price,
+                            itemType: itemType
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success && result.url) {
+                        showToast(`🔄 Redirecting to secure payment...`);
+                        // Redirect to Stripe checkout
+                        window.location.href = result.url;
+                    } else {
+                        console.error('❌ Error creating checkout session:', result);
+                        showToast('❌ Error creating payment session: ' + (result.error || 'Unknown error'), 'error');
                         
-                        // Simulate payment processing
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        
-                        if (isCredits) {
-                            // Purchase letter credits
-                            const response = await fetch('/api/buy-letter-credits', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ package: packageType, amount, price })
-                            });
-                            
-                            if (response.ok) {
-                                showToast(`🎉 Successfully purchased ${amount} letter credits!`);
-                            } else {
-                                showToast('Payment failed. Please try again.');
-                            }
-                        } else {
-                            // Add coins to user account
-                            const response = await fetch('/api/buy-coins', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ package: packageType, amount, price })
-                            });
-                            
-                            if (response.ok) {
-                                showToast(`🎉 Successfully purchased ${amount} coins!`);
-                                await loadUserBalance(); // Refresh balance
-                            } else {
-                                showToast('Payment failed. Please try again.');
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error buying package:', error);
-                        showToast('Error processing payment. Please try again.');
-                    } finally {
+                        // Restore button state
+                        button.innerHTML = originalText;
                         button.disabled = false;
-                        button.innerHTML = '<i class="fas fa-shopping-cart"></i> Buy Now';
                     }
+                } catch (error) {
+                    console.error('❌ Error initiating purchase:', error);
+                    showToast('❌ Error starting payment process. Please try again.', 'error');
+                    
+                    // Restore button state
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            });
+        });
+
+        // Buy special items functionality
+        document.querySelectorAll('.btn-buy-special').forEach(button => {
+            button.addEventListener('click', async () => {
+                const itemType = button.dataset.item;
+                const amount = parseInt(button.dataset.amount);
+                const price = parseFloat(button.dataset.price);
+                const isCredits = button.dataset.credits === 'true';
+                const isCoins = button.dataset.coins === 'true';
+                
+                console.log(`🛒 Initiating special item purchase: ${itemType} for ${isCoins ? price + ' coins' : '$' + price}`);
+                
+                try {
+                    // Show loading state
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    button.disabled = true;
+                    
+                    if (isCoins) {
+                        // Purchase with coins
+                        const response = await fetch('/api/purchase-with-coins', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                itemType: itemType,
+                                amount: amount,
+                                price: price
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            showToast(`✅ Successfully purchased ${itemType}!`);
+                            // Update balance display
+                            if (window.loadUserBalance) {
+                                window.loadUserBalance();
+                            }
+                            // Restore button state
+                            button.innerHTML = originalText;
+                            button.disabled = false;
+                        } else {
+                            showToast('❌ Purchase failed: ' + (result.error || 'Insufficient coins'), 'error');
+                            button.innerHTML = originalText;
+                            button.disabled = false;
+                        }
+                    } else {
+                        // Purchase with money (for letter credits)
+                        showToast(`💳 Creating secure payment session...`);
+                        
+                        const response = await fetch('/api/create-one-time-checkout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                packageType: itemType,
+                                amount: amount,
+                                price: price,
+                                itemType: 'credits'
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success && result.url) {
+                            console.log(`✅ Checkout session created, redirecting to Stripe...`);
+                            showToast(`🔄 Redirecting to secure payment...`);
+                            window.location.href = result.url;
+                        } else {
+                            console.error('❌ Error creating checkout session:', result);
+                            showToast('❌ Error creating payment session: ' + (result.error || 'Unknown error'), 'error');
+                            button.innerHTML = originalText;
+                            button.disabled = false;
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Error initiating special item purchase:', error);
+                    showToast('❌ Error starting purchase process. Please try again.', 'error');
+                    button.innerHTML = originalText;
+                    button.disabled = false;
                 }
             });
         });
@@ -1356,7 +1982,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
 
-        // Become premium functionality
+        // Become premium functionality with Stripe integration
         if (becomePremiumButton) {
             becomePremiumButton.addEventListener('click', async () => {
                 const selectedPlan = document.querySelector('.premium-option.selected');
@@ -1364,43 +1990,51 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const price = selectedPlan.querySelector('.option-price').textContent;
                 const period = selectedPlan.querySelector('.option-period').textContent;
                 
-                if (confirm(`Upgrade to Premium ${period} for ${price}?`)) {
-                    becomePremiumButton.disabled = true;
-                    becomePremiumButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                // Get Stripe price IDs from server (environment variables)
+                const stripePriceIds = {
+                    'monthly': '<%= process.env.STRIPE_PRICE_MONTHLY_SUB %>',
+                    'half-year': '<%= process.env.STRIPE_PRICE_HALF_YEAR_SUB %>',
+                    'yearly': '<%= process.env.STRIPE_PRICE_YEARLY_SUB %>'
+                };
+                
+                const priceId = stripePriceIds[plan];
+                if (!priceId) {
+                    showToast('Invalid plan selected. Please try again.');
+                    return;
+                }
+                
+                becomePremiumButton.disabled = true;
+                becomePremiumButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating checkout...';
+                
+                try {
+                    // Create Stripe checkout session
+                    const response = await fetch('/api/create-checkout-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            priceId: priceId,
+                            planType: plan,
+                            planName: `Premium ${period.charAt(0).toUpperCase() + period.slice(1)}`
+                        })
+                    });
                     
-                    try {
-                        // In real app, this would integrate with subscription service
-                        showToast(`🚀 Processing premium upgrade for ${period}...`);
-                        
-                        // Simulate subscription processing
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        
-                        // Upgrade user to premium
-                        const response = await fetch('/api/upgrade-premium', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ plan, price, period })
-                        });
-                        
-                        if (response.ok) {
-                            showToast('🎉 Welcome to Premium! Enjoy exclusive features!');
-                            // Update letter credits pricing for premium users
-                            updateLetterCreditsPricing(true);
-                            // Refresh premium content
-                            checkPremiumStatus();
-                        } else {
-                            showToast('Upgrade failed. Please try again.');
-                        }
-                    } catch (error) {
-                        console.error('Error upgrading to premium:', error);
-                        showToast('Error processing upgrade. Please try again.');
-                    } finally {
-                        becomePremiumButton.disabled = false;
-                        const period = selectedPlan.querySelector('.option-period').textContent;
-                        becomePremiumButton.innerHTML = `<i class="fas fa-crown"></i> Get Premium ${period.charAt(0).toUpperCase() + period.slice(1)}`;
+                    const data = await response.json();
+                    
+                    if (response.ok && data.url) {
+                        // Redirect to Stripe checkout
+                        window.location.href = data.url;
+                    } else {
+                        throw new Error(data.error || 'Failed to create checkout session');
                     }
+                } catch (error) {
+                    console.error('Error creating checkout session:', error);
+                    showToast('Error processing upgrade. Please try again.');
+                } finally {
+                    becomePremiumButton.disabled = false;
+                    const period = selectedPlan.querySelector('.option-period').textContent;
+                    becomePremiumButton.innerHTML = `<i class="fas fa-crown"></i> Get Premium ${period.charAt(0).toUpperCase() + period.slice(1)}`;
                 }
             });
         }
@@ -1409,7 +2043,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const updateLetterCreditsPricing = (isPremium) => {
             const letterCreditsPrice = document.getElementById('letter-credits-price');
             const discountBadge = document.getElementById('premium-discount-badge');
-            const letterCreditsButton = document.querySelector('[data-package="letter-credits"]');
+            const letterCreditsButton = document.querySelector('[data-item="letter-credits"]');
             
             if (isPremium) {
                 // Show discounted price for premium users
@@ -1432,13 +2066,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         const checkPremiumStatus = async () => {
             try {
                 const response = await fetch('/api/user/status');
+                
                 if (response.ok) {
                     const userData = await response.json();
+                    
                     updateLetterCreditsPricing(userData.premium || false);
                     updatePremiumContent(userData.premium || false);
+                    
+                    // Update subscription display if user has premium and subscription data
+                    if (userData.premium && userData.subscription) {
+                        updateSubscriptionDisplay(userData.subscription);
+                    }
+                } else {
+                    console.error('User status request failed:', response.status);
                 }
             } catch (error) {
-                console.error('Error checking premium status:', error);
+                console.error('❌ Error checking premium status:', error);
             }
         };
 
@@ -1448,12 +2091,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const premiumContent = document.getElementById('premium-content');
             
             if (isPremium) {
-                nonPremiumContent.style.display = 'none';
-                premiumContent.style.display = 'block';
+                if (nonPremiumContent) nonPremiumContent.style.display = 'none';
+                if (premiumContent) premiumContent.style.display = 'block';
                 loadSubscriptionDetails();
             } else {
-                nonPremiumContent.style.display = 'block';
-                premiumContent.style.display = 'none';
+                if (nonPremiumContent) nonPremiumContent.style.display = 'block';
+                if (premiumContent) premiumContent.style.display = 'none';
             }
         };
 
@@ -1545,7 +2188,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const sidebarName = document.getElementById('sidebar-name');
                     
                     if (sidebarAvatar) {
-                        sidebarAvatar.src = userData.avatar || 'https://placehold.co/60x60/FFFFFF/000000?text=User';
+                        sidebarAvatar.src = userData.avatar || '/media/unverifiedUser.jpg';
                     }
                     if (sidebarName) {
                         sidebarName.textContent = userData.name || 'User';
@@ -1583,12 +2226,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateSidebar();
         loadUserBalance();
         checkPremiumStatus();
+        
 
         // Subscription management
         const subscriptionModal = document.getElementById('subscription-modal');
         const manageSubscriptionBtn = document.getElementById('btn-manage-subscription');
         const closeModalBtn = document.getElementById('btn-close-modal');
         const cancelSubscriptionBtn = document.getElementById('btn-cancel-subscription');
+        const continueSubscriptionBtn = document.getElementById('btn-continue-subscription');
 
         // Open subscription management modal
         if (manageSubscriptionBtn) {
@@ -1684,26 +2329,45 @@ document.addEventListener('DOMContentLoaded', async () => {
             upgradeButtons.innerHTML = '';
             const currentPlan = subscription.type;
             
+            // Show/hide appropriate sections based on cancellation status
+            const continueSection = document.getElementById('continue-section');
+            const cancelSection = document.getElementById('cancel-section');
+            const accessUntilDate = document.getElementById('access-until-date');
+            
             if (subscription.cancelled) {
-                // Show message for cancelled subscriptions
+                // Show continue section, hide cancel section
+                if (continueSection) continueSection.style.display = 'block';
+                if (cancelSection) cancelSection.style.display = 'none';
+                
+                // Update access until date
                 const endDate = new Date(subscription.endDate);
                 const fullDate = endDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                if (accessUntilDate) accessUntilDate.textContent = fullDate;
+                
+                // Show message for cancelled subscriptions in upgrade section
                 upgradeButtons.innerHTML = `
                     <p class="no-upgrade-message">Your subscription is cancelled. Premium features will remain active until ${fullDate}.</p>
                 `;
-            } else if (currentPlan === 'monthly') {
-                upgradeButtons.innerHTML = `
-                    <button class="upgrade-option-btn" data-plan="half-year">Upgrade to 6-Month ($29.99)</button>
-                    <button class="upgrade-option-btn" data-plan="yearly">Upgrade to Yearly ($39.99)</button>
-                `;
-            } else if (currentPlan === 'half-year') {
-                upgradeButtons.innerHTML = `
-                    <button class="upgrade-option-btn" data-plan="yearly">Upgrade to Yearly ($39.99)</button>
-                `;
-            } else if (currentPlan === 'yearly') {
-                upgradeButtons.innerHTML = `
-                    <p class="no-upgrade-message">You're already on the highest plan!</p>
-                `;
+            } else {
+                // Show cancel section, hide continue section
+                if (continueSection) continueSection.style.display = 'none';
+                if (cancelSection) cancelSection.style.display = 'block';
+                
+                // Show upgrade options for active subscriptions
+                if (currentPlan === 'monthly') {
+                    upgradeButtons.innerHTML = `
+                        <button class="upgrade-option-btn" data-plan="half-year">Upgrade to 6-Month ($29.99)</button>
+                        <button class="upgrade-option-btn" data-plan="yearly">Upgrade to Yearly ($39.99)</button>
+                    `;
+                } else if (currentPlan === 'half-year') {
+                    upgradeButtons.innerHTML = `
+                        <button class="upgrade-option-btn" data-plan="yearly">Upgrade to Yearly ($39.99)</button>
+                    `;
+                } else if (currentPlan === 'yearly') {
+                    upgradeButtons.innerHTML = `
+                        <p class="no-upgrade-message">You're already on the highest plan!</p>
+                    `;
+                }
             }
 
             // Add event listeners to upgrade buttons
@@ -1720,7 +2384,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 body: JSON.stringify({ newPlan })
                             });
 
-                            if (response.ok) {
+                            const data = await response.json();
+
+                            if (response.ok && data.url) {
+                                // Redirect to Stripe checkout for upgrade payment
+                                window.location.href = data.url;
+                            } else if (response.ok) {
                                 showToast('Subscription updated successfully!');
                                 subscriptionModal.style.display = 'none';
                                 checkPremiumStatus(); // Refresh the display
@@ -1772,6 +2441,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        // Continue subscription (reactivate cancelled subscription)
+        if (continueSubscriptionBtn) {
+            continueSubscriptionBtn.addEventListener('click', async () => {
+                if (confirm('Are you sure you want to reactivate your subscription? Your billing will resume and you will continue to enjoy premium features.')) {
+                    try {
+                        continueSubscriptionBtn.disabled = true;
+                        continueSubscriptionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Reactivating...';
+                        
+                        const response = await fetch('/api/reactivate-subscription', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            const nextBilling = result.nextBilling ? new Date(result.nextBilling).toLocaleDateString() : 'your next billing date';
+                            showToast(`Subscription reactivated! Your next billing will be on ${nextBilling}.`);
+                            subscriptionModal.style.display = 'none';
+                            checkPremiumStatus(); // Refresh the display
+                        } else {
+                            showToast(result.error || 'Failed to reactivate subscription. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('Error reactivating subscription:', error);
+                        showToast('Error reactivating subscription. Please try again.');
+                    } finally {
+                        continueSubscriptionBtn.disabled = false;
+                        continueSubscriptionBtn.innerHTML = '<i class="fas fa-play"></i> Continue Subscription';
+                    }
+                }
+            });
+        }
+
         // Check if profile is complete for marketplace page
         try {
             const userResponse = await fetch('/api/user/status');
@@ -1786,8 +2491,1224 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error checking profile status:', error);
         }
     }
+
+    // 6. Check if we are on the REFERRALS page
+    if (document.getElementById('referral-count')) {
+        let referralData = null;
+
+        // Load referral information
+        const loadReferralData = async () => {
+            try {
+                const response = await fetch('/api/referral-info');
+                if (response.ok) {
+                    referralData = await response.json();
+                    updateReferralDisplay();
+                } else {
+                    console.error('Failed to load referral data');
+                    // Show error state instead of infinite loading
+                    showErrorState();
+                }
+            } catch (error) {
+                console.error('Error loading referral data:', error);
+                // Show error state instead of infinite loading
+                showErrorState();
+            }
+        };
+
+        // Show error state when referral data fails to load
+        const showErrorState = () => {
+            const referredUsersList = document.getElementById('referred-users-list');
+            if (referredUsersList) {
+                referredUsersList.innerHTML = `
+                    <div class="loading-referrals">
+                        <div class="no-referrals-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h4>Unable to Load Referral Data</h4>
+                        <p>Please refresh the page to try again.</p>
+                        <button class="btn-share-now" onclick="window.location.reload()">
+                            <i class="fas fa-refresh"></i> Refresh Page
+                        </button>
+                    </div>
+                `;
+            }
+            
+            // Set default values to prevent blank display
+            document.getElementById('referral-count').textContent = '0';
+            document.getElementById('referral-earnings').textContent = '$0.00';
+            document.getElementById('monthly-referrals').textContent = '0';
+            document.getElementById('referral-code').textContent = 'Unable to load';
+            document.getElementById('referral-link').value = 'Unable to load referral link';
+        };
+
+        // Update referral display
+        const updateReferralDisplay = () => {
+            if (!referralData) return;
+
+            // Update stats
+            document.getElementById('referral-count').textContent = referralData.referralCount || 0;
+            document.getElementById('referral-earnings').textContent = `$${referralData.earnings?.total?.toFixed(2) || '0.00'}`;
+            
+            // Calculate monthly referrals (placeholder logic)
+            const currentMonth = new Date().getMonth();
+            const monthlyCount = referralData.referredUsers.filter(user => {
+                const joinDate = new Date(user.joinedAt);
+                return joinDate.getMonth() === currentMonth;
+            }).length;
+            document.getElementById('monthly-referrals').textContent = monthlyCount;
+
+            // Update referral code and link
+            const referralCode = referralData.referralCode || 'Loading...';
+            const baseUrl = window.location.origin;
+            const referralLink = `${baseUrl}?ref=${referralCode}`;
+            
+            document.getElementById('referral-code').textContent = referralCode;
+            document.getElementById('referral-link').value = referralLink;
+
+            // Show referrer section if user was referred
+            if (referralData.referredBy) {
+                const referredBySection = document.getElementById('referred-by-section');
+                referredBySection.classList.remove('d-none');
+                document.getElementById('referrer-name').textContent = referralData.referredBy.name;
+                document.getElementById('referrer-code').textContent = referralData.referredBy.referralCode;
+            }
+
+            // Update program info
+            updateProgramDisplay();
+
+            // Update referred users list
+            updateReferredUsersList();
+        };
+
+        // Update program display
+        const updateProgramDisplay = () => {
+            if (!referralData?.programDetails) return;
+
+            const programInfo = document.createElement('div');
+            programInfo.className = 'current-program-info';
+            programInfo.innerHTML = `
+                <div class="program-info-card">
+                    <div class="program-info-header">
+                        <i class="fas fa-star"></i>
+                        <h4>Your Current Program</h4>
+                    </div>
+                    <div class="program-info-details">
+                        <h5>${referralData.programDetails.name}</h5>
+                        <p>${referralData.programDetails.description}</p>
+                        ${referralData.earnings?.pending > 0 ? `<div class="pending-earnings">Pending: $${referralData.earnings.pending.toFixed(2)}</div>` : ''}
+                    </div>
+                </div>
+            `;
+
+            // Insert after stats but before referral link section
+            const statsGrid = document.querySelector('.stats-grid');
+            if (statsGrid && !document.querySelector('.current-program-info')) {
+                statsGrid.parentNode.insertBefore(programInfo, statsGrid.nextSibling);
+            }
+        };
+
+        // Pagination state for referrals
+        let referralCurrentPage = 1;
+        let referralTotalPages = 1;
+        let allReferralDetails = [];
+
+        // Update referred users list with detailed earnings
+        const updateReferredUsersList = async (page = 1, append = false) => {
+            const referredUsersList = document.getElementById('referred-users-list');
+            const noReferrals = document.getElementById('no-referrals');
+
+            try {
+                // Fetch detailed referral earnings with pagination
+                const response = await fetch(`/api/user/referral-earnings?page=${page}&limit=5`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch referral earnings');
+                }
+                
+                const earningsData = await response.json();
+                
+                // Update pagination state
+                if (earningsData.pagination) {
+                    referralCurrentPage = earningsData.pagination.page;
+                    referralTotalPages = earningsData.pagination.total_pages;
+                }
+
+                if (append) {
+                    // Append new data to existing
+                    allReferralDetails = allReferralDetails.concat(earningsData.referral_details || []);
+                } else {
+                    // Replace data
+                    allReferralDetails = earningsData.referral_details || [];
+                }
+                
+                if (!allReferralDetails || allReferralDetails.length === 0) {
+                    referredUsersList.style.display = 'none';
+                    noReferrals.style.display = 'block';
+                    return;
+                }
+
+                referredUsersList.style.display = 'block';
+                noReferrals.style.display = 'none';
+
+                const usersHTML = allReferralDetails.map(user => {
+                    const joinDate = new Date(user.join_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+
+                    // Create earnings breakdown
+                    const earningsBreakdown = user.earnings.map(earning => {
+                        const statusBadge = {
+                            'pending': '<span class="status-badge pending">⏳ Pending</span>',
+                            'approved': '<span class="status-badge approved">✅ Approved</span>',
+                            'paid': '<span class="status-badge paid">💰 Paid</span>'
+                        }[earning.status] || '<span class="status-badge unknown">❓ Unknown</span>';
+
+                        const earningDate = new Date(earning.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        });
+
+                        return `
+                            <div class="earning-item">
+                                <div class="earning-info">
+                                    <span class="earning-amount">$${earning.amount.toFixed(2)}</span>
+                                    <span class="earning-type">${earning.type}</span>
+                                    <span class="earning-date">${earningDate}</span>
+                                </div>
+                                <div class="earning-status">${statusBadge}</div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="referred-user-card detailed">
+                            <div class="referred-user-header">
+                                <div class="referred-user-info">
+                                    <div class="referred-user-name">${user.user_name || 'Anonymous'}</div>
+                                    <div class="referred-user-email">${user.user_email}</div>
+                                    <div class="referred-user-date">Joined ${joinDate}</div>
+                                </div>
+                                <div class="referred-user-summary">
+                                    <div class="total-earned">$${user.total_earned.toFixed(2)}</div>
+                                    <div class="earnings-breakdown">
+                                        ${user.pending_amount > 0 ? `<span class="pending-amount">$${user.pending_amount.toFixed(2)} pending</span>` : ''}
+                                        ${user.approved_amount > 0 ? `<span class="approved-amount">$${user.approved_amount.toFixed(2)} approved</span>` : ''}
+                                        ${user.paid_amount > 0 ? `<span class="paid-amount">$${user.paid_amount.toFixed(2)} paid</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="earnings-details">
+                                <div class="earnings-header">
+                                    <h4>💰 Earnings from ${user.user_name}</h4>
+                                </div>
+                                <div class="earnings-list">
+                                    ${earningsBreakdown}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Add "Load More" button if there are more pages
+                const loadMoreButton = referralCurrentPage < referralTotalPages ? `
+                    <div class="load-more-container">
+                        <button id="load-more-referrals" class="btn-load-more">
+                            <i class="fas fa-plus"></i> Load More
+                        </button>
+                    </div>
+                ` : '';
+
+                referredUsersList.innerHTML = usersHTML + loadMoreButton;
+
+                // Add click handler for Load More button
+                const loadMoreBtn = document.getElementById('load-more-referrals');
+                if (loadMoreBtn) {
+                    loadMoreBtn.addEventListener('click', async () => {
+                        loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                        await updateReferredUsersList(referralCurrentPage + 1, true);
+                    });
+                }
+
+                // Update summary stats
+                if (earningsData.summary) {
+                    const earningsElement = document.getElementById('referral-earnings');
+                    if (earningsElement) {
+                        earningsElement.textContent = `$${earningsData.summary.total_earnings.toFixed(2)}`;
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error loading referral earnings:', error);
+                referredUsersList.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Unable to load detailed earnings. Please refresh the page.</p>
+                    </div>
+                `;
+            }
+        };
+
+        // Copy referral link to clipboard
+        const copyReferralLink = async () => {
+            const referralLinkInput = document.getElementById('referral-link');
+            const copyBtn = document.getElementById('copy-link-btn');
+            
+            try {
+                await navigator.clipboard.writeText(referralLinkInput.value);
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                copyBtn.style.background = 'linear-gradient(45deg, #00ff87, #00d4aa)';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = 'linear-gradient(45deg, var(--glow-color-1), var(--glow-color-2))';
+                }, 2000);
+            } catch (error) {
+                console.error('Failed to copy link:', error);
+                // Fallback for older browsers
+                referralLinkInput.select();
+                referralLinkInput.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+                
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+            }
+        };
+
+        // Share referral link
+        const shareReferralLink = async () => {
+            const referralLink = document.getElementById('referral-link').value;
+            const shareData = {
+                title: 'Join me on this amazing platform!',
+                text: 'Sign up using my referral link and we both get benefits!',
+                url: referralLink
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.error('Error sharing:', error);
+                    }
+                }
+            } else {
+                // Fallback: copy to clipboard
+                await copyReferralLink();
+            }
+        };
+
+        // Update sidebar
+        const updateSidebar = async () => {
+            try {
+                const userResponse = await fetch('/api/user/status');
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    const sidebarAvatar = document.getElementById('sidebar-avatar');
+                    const sidebarName = document.getElementById('sidebar-name');
+                    
+                    if (sidebarAvatar) {
+                        sidebarAvatar.src = userData.avatar || '/media/unverifiedUser.jpg';
+                    }
+                    if (sidebarName) {
+                        sidebarName.textContent = userData.name || 'User';
+                        
+                        // Apply premium gradient to sidebar name if user has premium
+                        if (userData.premium) {
+                            sidebarName.classList.add('premium-name-gradient');
+                        } else {
+                            sidebarName.classList.remove('premium-name-gradient');
+                        }
+                    }
+                }
+                
+                // Update notification badge
+                const unreadResponse = await fetch('/api/unread-counts');
+                if (unreadResponse.ok) {
+                    const unreadData = await unreadResponse.json();
+                    const notificationBadge = document.getElementById('sidebar-notification-badge');
+                    
+                    if (notificationBadge) {
+                        if (unreadData.hasUnread && unreadData.unreadByType.total > 0) {
+                            notificationBadge.textContent = unreadData.unreadByType.total;
+                            notificationBadge.classList.remove('d-none');
+                        } else {
+                            notificationBadge.classList.add('d-none');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating sidebar:', error);
+            }
+        };
+
+        // Event listeners
+        document.getElementById('copy-link-btn').addEventListener('click', copyReferralLink);
+        document.getElementById('share-link-btn').addEventListener('click', shareReferralLink);
+        document.getElementById('share-now-btn').addEventListener('click', shareReferralLink);
+
+        // Initialize
+        updateSidebar();
+        loadReferralData();
+    }
+
+    // 7. Check if we are on the ADMIN PANEL page
+    if (document.getElementById('users-table-body')) {
+        let usersData = [];
+        let currentUserId = null;
+        let usersCurrentPage = 1;
+        let usersTotalPages = 1;
+
+        // Load users data with pagination
+        const loadUsersData = async (page = 1, limit = 5) => {
+            try {
+                // Show loading state
+                const tbody = document.getElementById('users-table-body');
+                tbody.innerHTML = `
+                    <tr class="loading-row">
+                        <td colspan="7">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Loading users...
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                
+                // Get current search term
+                const searchTerm = document.getElementById('user-search')?.value || '';
+                
+                // Build query parameters
+                const params = new URLSearchParams({
+                    page: page.toString(),
+                    limit: limit.toString()
+                });
+                
+                if (searchTerm.trim()) {
+                    params.append('search', searchTerm.trim());
+                }
+                
+                const response = await fetch(`/api/admin/users?${params.toString()}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    usersData = data.users || []; // Extract users array from paginated response
+                    usersCurrentPage = data.pagination.page;
+                    usersTotalPages = data.pagination.totalPages;
+                    renderUsersTable();
+                    renderUsersPagination();
+                } else {
+                    showUsersError();
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showUsersError();
+            }
+        };
+
+        // Load referrals data for management table
+        let referralsData = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        
+        const loadReferralsData = async (page = 1, status = 'all', suspicious = 'all') => {
+            try {
+                // Show loading state
+                const tbody = document.getElementById('referrals-table-body');
+                tbody.innerHTML = `
+                    <tr class="loading-row">
+                        <td colspan="10">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Loading referrals...
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                
+                const response = await fetch(`/api/admin/referrals?page=${page}&limit=10&status=${status}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    referralsData = data.referrals || [];
+                    currentPage = data.pagination.page;
+                    totalPages = data.pagination.totalPages;
+                    renderReferralsTable(suspicious);
+                    renderPagination();
+                } else {
+                    showReferralsError();
+                }
+            } catch (error) {
+                console.error('Error loading referrals:', error);
+                showReferralsError();
+            }
+        };
+
+        // Render users table
+        const renderUsersTable = () => {
+            const tbody = document.getElementById('users-table-body');
+
+            if (!usersData || usersData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">
+                            No users found matching your criteria
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = usersData.map(user => `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.firstName} ${user.lastName}</td>
+                    <td>${user.email}</td>
+                    <td>${user.referralCount || 0}</td>
+                    <td>
+                        <span class="program-badge ${user.referralProgramType}">
+                            ${getProgramDisplayName(user.referralProgramType)}
+                        </span>
+                    </td>
+                    <td>${formatDate(user.created_at)}</td>
+                    <td>
+                        <button class="btn-change-program" onclick="openChangeProgramModal(${user.id}, '${user.firstName} ${user.lastName}', '${user.referralProgramType}')">
+                            Change Program
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        // Get program display name
+        const getProgramDisplayName = (programType) => {
+            switch(programType) {
+                case 'standard': return 'Standard';
+                case 'offer_5': return '$5 Offer';
+                case 'offer_10': return '$10 Retention';
+                default: return 'Standard';
+            }
+        };
+
+        // Format date
+        const formatDate = (dateString) => {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        };
+
+        // Show users error
+        const showUsersError = () => {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: #ff4757;">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        Error loading users. Please refresh the page.
+                    </td>
+                </tr>
+            `;
+        };
+
+        // Make loadUsersData globally accessible for pagination buttons
+        window.loadUsersDataPage = (page) => {
+            loadUsersData(page);
+        };
+
+        // Render users pagination
+        const renderUsersPagination = () => {
+            const paginationContainer = document.getElementById('users-pagination');
+            
+            if (usersTotalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '<nav><ul class="pagination">';
+            
+            // Previous button
+            if (usersCurrentPage > 1) {
+                paginationHTML += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="window.loadUsersDataPage(${usersCurrentPage - 1}); return false;">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                </li>`;
+            }
+            
+            // Page numbers
+            const startPage = Math.max(1, usersCurrentPage - 2);
+            const endPage = Math.min(usersTotalPages, usersCurrentPage + 2);
+            
+            if (startPage > 1) {
+                paginationHTML += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="window.loadUsersDataPage(1); return false;">1</a>
+                </li>`;
+                if (startPage > 2) {
+                    paginationHTML += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === usersCurrentPage ? 'active' : '';
+                paginationHTML += `<li class="page-item ${activeClass}">
+                    <a class="page-link" href="#" onclick="window.loadUsersDataPage(${i}); return false;">${i}</a>
+                </li>`;
+            }
+            
+            if (endPage < usersTotalPages) {
+                if (endPage < usersTotalPages - 1) {
+                    paginationHTML += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                }
+                paginationHTML += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="window.loadUsersDataPage(${usersTotalPages}); return false;">${usersTotalPages}</a>
+                </li>`;
+            }
+            
+            // Next button
+            if (usersCurrentPage < usersTotalPages) {
+                paginationHTML += `<li class="page-item">
+                    <a class="page-link" href="#" onclick="window.loadUsersDataPage(${usersCurrentPage + 1}); return false;">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>`;
+            }
+            
+            paginationHTML += '</ul></nav>';
+            
+            // Add page info
+            paginationHTML += `<div class="pagination-info" style="margin-top: 10px; color: rgba(255,255,255,0.7); font-size: 0.9em;">
+                Showing page ${usersCurrentPage} of ${usersTotalPages} (${((usersCurrentPage - 1) * 5 + 1)}-${Math.min(usersCurrentPage * 5, usersTotalPages * 5)} users)
+            </div>`;
+            
+            paginationContainer.innerHTML = paginationHTML;
+        };
+
+        // Render referrals management table
+        const renderReferralsTable = (suspiciousFilter = 'all') => {
+            const tbody = document.getElementById('referrals-table-body');
+            
+            if (!referralsData || referralsData.length === 0) {
+                tbody.innerHTML = `
+                    <tr class="no-data-row">
+                        <td colspan="10">
+                            <div class="no-referrals-message">
+                                <i class="fas fa-handshake"></i>
+                                <h4>No Referrals Found</h4>
+                                <p>No referral earnings recorded yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Filter by suspicious status
+            let filteredReferrals = referralsData;
+            if (suspiciousFilter === 'suspected') {
+                filteredReferrals = referralsData.filter(ref => ref.suspected);
+            } else if (suspiciousFilter === 'clean') {
+                filteredReferrals = referralsData.filter(ref => !ref.suspected);
+            }
+
+            tbody.innerHTML = filteredReferrals.map(referral => {
+                const suspectedBadge = referral.suspected 
+                    ? '<span class="badge badge-danger">⚠️ Yes</span>' 
+                    : '<span class="badge badge-success">✅ No</span>';
+                
+                const statusBadge = {
+                    'pending': '<span class="badge badge-warning">Pending</span>',
+                    'approved': '<span class="badge badge-info">Approved</span>',
+                    'paid': '<span class="badge badge-success">Paid</span>'
+                }[referral.status] || '<span class="badge badge-secondary">Unknown</span>';
+
+                const actionButton = referral.status === 'pending' 
+                    ? `<button class="btn btn-sm btn-primary approve-btn" data-referral-id="${referral.id}">
+                         <i class="fas fa-check"></i> Approve
+                       </button>`
+                    : referral.status === 'approved'
+                    ? `<button class="btn btn-sm btn-success mark-paid-btn" data-referral-id="${referral.id}">
+                         <i class="fas fa-dollar-sign"></i> Mark as Paid
+                       </button>`
+                    : '<span class="text-success"><i class="fas fa-check-circle"></i> Paid</span>';
+
+                const referrerIp = referral.referrer_ip || 'N/A';
+                const referredIp = referral.referred_user_ip || 'N/A';
+                const ipMatch = referral.referrer_ip && referral.referred_user_ip && referral.referrer_ip === referral.referred_user_ip;
+
+                return `
+                    <tr class="${referral.suspected ? 'table-warning' : ''}">
+                        <td><strong>#${referral.id}</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <strong>${referral.referrer_name || 'Unknown'}</strong><br>
+                                <small class="text-muted">${referral.referrer_email || 'No email'}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <strong>${referral.referred_name || 'Unknown'}</strong><br>
+                                <small class="text-muted">${referral.referred_email || 'No email'}</small>
+                            </div>
+                        </td>
+                        <td><strong>$${parseFloat(referral.amount || 0).toFixed(2)}</strong></td>
+                        <td><span class="badge badge-secondary">${referral.earning_type}</span></td>
+                        <td>
+                            <small>
+                                Referrer: <code>${referrerIp}</code><br>
+                                Referred: <code>${referredIp}</code>
+                                ${ipMatch ? '<br><span class="text-danger">⚠️ Same IP</span>' : ''}
+                            </small>
+                        </td>
+                        <td>${suspectedBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td><small>${new Date(referral.created_at).toLocaleDateString()}</small></td>
+                        <td>${actionButton}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Add click handlers for approve buttons
+            document.querySelectorAll('.approve-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const referralId = e.target.closest('.approve-btn').dataset.referralId;
+                    await approveReferral(referralId);
+                });
+            });
+
+            // Add click handlers for mark as paid buttons
+            document.querySelectorAll('.mark-paid-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const referralId = e.target.closest('.mark-paid-btn').dataset.referralId;
+                    await markReferralAsPaid(referralId);
+                });
+            });
+        };
+
+        // Approve referral function
+        const approveReferral = async (referralId) => {
+            try {
+                const response = await fetch(`/api/admin/approve-referral/${referralId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message || 'Referral approved successfully!');
+                    // Reload current page
+                    const statusFilter = document.getElementById('referral-status-filter').value;
+                    const suspiciousFilter = document.getElementById('suspicious-filter').value;
+                    await loadReferralsData(currentPage, statusFilter, suspiciousFilter);
+                } else {
+                    const error = await response.json();
+                    alert('Error approving referral: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error approving referral:', error);
+                alert('Error approving referral. Please try again.');
+            }
+        };
+
+        // Mark referral as paid function
+        const markReferralAsPaid = async (referralId) => {
+            try {
+                // Confirm before marking as paid
+                if (!confirm('Are you sure you want to mark this referral as paid? This action cannot be undone.')) {
+                    return;
+                }
+
+                const response = await fetch(`/api/admin/mark-paid/${referralId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message || 'Referral marked as paid successfully!');
+                    // Reload current page
+                    const statusFilter = document.getElementById('referral-status-filter').value;
+                    const suspiciousFilter = document.getElementById('suspicious-filter').value;
+                    await loadReferralsData(currentPage, statusFilter, suspiciousFilter);
+                } else {
+                    const error = await response.json();
+                    alert('Error marking referral as paid: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error marking referral as paid:', error);
+                alert('Error marking referral as paid. Please try again.');
+            }
+        };
+
+        // Render pagination
+        const renderPagination = () => {
+            const container = document.getElementById('referrals-pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let paginationHtml = '<nav><ul class="pagination">';
+            
+            // Previous button
+            if (currentPage > 1) {
+                paginationHtml += `<li class="page-item">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </a>
+                </li>`;
+            }
+
+            // Page numbers with smart ellipsis
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            // Show first page if we're not starting from it
+            if (startPage > 1) {
+                paginationHtml += `<li class="page-item">
+                    <a class="page-link" href="#" data-page="1">1</a>
+                </li>`;
+                if (startPage > 2) {
+                    paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                }
+            }
+            
+            // Show page numbers around current page
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                </li>`;
+            }
+            
+            // Show last page if we're not ending with it
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                }
+                paginationHtml += `<li class="page-item">
+                    <a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a>
+                </li>`;
+            }
+
+            // Next button
+            if (currentPage < totalPages) {
+                paginationHtml += `<li class="page-item">
+                    <a class="page-link" href="#" data-page="${currentPage + 1}">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>`;
+            }
+
+            paginationHtml += '</ul></nav>';
+            
+            // Add page info
+            const totalReferrals = totalPages * 10; // Approximate, since we show 10 per page
+            const startItem = (currentPage - 1) * 10 + 1;
+            const endItem = Math.min(currentPage * 10, totalReferrals);
+            paginationHtml += `<div class="pagination-info" style="margin-top: 10px; color: rgba(255,255,255,0.7); font-size: 0.9em; text-align: center;">
+                Showing page ${currentPage} of ${totalPages} referrals
+            </div>`;
+            
+            container.innerHTML = paginationHtml;
+
+            // Add click handlers
+            container.querySelectorAll('.page-link').forEach(link => {
+                link.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const page = parseInt(e.target.dataset.page);
+                    if (page && page !== currentPage) {
+                        const statusFilter = document.getElementById('referral-status-filter').value;
+                        const suspiciousFilter = document.getElementById('suspicious-filter').value;
+                        await loadReferralsData(page, statusFilter, suspiciousFilter);
+                    }
+                });
+            });
+        };
+
+        // Show referrals error
+        const showReferralsError = () => {
+            const tbody = document.getElementById('referrals-table-body');
+            tbody.innerHTML = `
+                <tr class="error-row">
+                    <td colspan="10">
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h4>Error Loading Referrals</h4>
+                            <p>Please refresh the page to try again.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        };
+
+        // Open change program modal
+        window.openChangeProgramModal = (userId, userName, currentProgram) => {
+            currentUserId = userId;
+            document.getElementById('modal-user-name').textContent = userName;
+            
+            // Set current program as selected
+            const radioButtons = document.querySelectorAll('input[name="programType"]');
+            radioButtons.forEach(radio => {
+                radio.checked = radio.value === currentProgram;
+            });
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('changeProgramModal'));
+            modal.show();
+        };
+
+        // Save program change
+        const saveProgramChange = async () => {
+            const selectedProgram = document.querySelector('input[name="programType"]:checked');
+            if (!selectedProgram || !currentUserId) return;
+
+            try {
+                const response = await fetch(`/api/admin/users/${currentUserId}/referral-program`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        programType: selectedProgram.value
+                    })
+                });
+
+                if (response.ok) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('changeProgramModal'));
+                    modal.hide();
+                    
+                    // Reload users data
+                    await loadUsersData();
+                } else {
+                    alert('Error updating referral program. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error saving program change:', error);
+                alert('Error updating referral program. Please try again.');
+            }
+        };
+
+        // Update sidebar function for admin panel
+        const updateSidebar = async () => {
+            try {
+                const userResponse = await fetch('/api/user/status');
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    const sidebarAvatar = document.getElementById('sidebar-avatar');
+                    const sidebarName = document.getElementById('sidebar-name');
+                    
+                    if (sidebarAvatar) {
+                        sidebarAvatar.src = userData.avatar || '/media/unverifiedUser.jpg';
+                    }
+                    if (sidebarName) {
+                        sidebarName.textContent = userData.firstName || 'User';
+                        // Apply premium gradient if user is premium
+                        if (userData.premium) {
+                            sidebarName.classList.add('premium-name-gradient');
+                        } else {
+                            sidebarName.classList.remove('premium-name-gradient');
+                        }
+                    }
+                    
+                    // Update notification badge
+                    try {
+                        const unreadResponse = await fetch('/api/unread-counts');
+                        if (unreadResponse.ok) {
+                            const unreadData = await unreadResponse.json();
+                            const notificationBadge = document.getElementById('sidebar-notification-badge');
+                            if (notificationBadge) {
+                                if (unreadData.hasUnread && unreadData.unreadByType.total > 0) {
+                                    notificationBadge.textContent = unreadData.unreadByType.total;
+                                    notificationBadge.classList.remove('d-none');
+                                } else {
+                                    notificationBadge.classList.add('d-none');
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error updating notification badge:', error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating sidebar:', error);
+            }
+        };
+
+        // Event listeners for users search (reload data from server)
+        let searchTimeout;
+        document.getElementById('user-search').addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadUsersData(1); // Reset to page 1 when searching
+            }, 300); // Debounce search for 300ms
+        });
+        
+        document.getElementById('program-filter').addEventListener('change', () => {
+            loadUsersData(1); // Reset to page 1 when filtering
+        });
+        document.getElementById('save-program-change').addEventListener('click', saveProgramChange);
+
+        // Referrals event listeners
+        document.getElementById('referral-status-filter').addEventListener('change', () => {
+            const statusFilter = document.getElementById('referral-status-filter').value;
+            const suspiciousFilter = document.getElementById('suspicious-filter').value;
+            loadReferralsData(1, statusFilter, suspiciousFilter);
+        });
+        
+        document.getElementById('suspicious-filter').addEventListener('change', () => {
+            const statusFilter = document.getElementById('referral-status-filter').value;
+            const suspiciousFilter = document.getElementById('suspicious-filter').value;
+            renderReferralsTable(suspiciousFilter); // Just re-render current data
+        });
+
+        // Initialize
+        updateSidebar();
+        loadUsersData();
+        loadReferralsData();
+    }
+
+    // Check if profile is complete
+    try {
+        const userResponse = await fetch('/api/user/status');
+        if (userResponse.ok) {
+            const userData = await userResponse.json();
+            if (!userData.completedProfile) {
+                toggleProfileBanner(true);
+            }
+        }
+    } catch (error) {
+        console.error('Error checking profile status:', error);
+    }
+
+    // --- UNITY ADS FUNCTIONALITY ---
+    
+    // Unity Ads configuration - these will be set from environment variables
+    let unityGameID = '';
+    let rewardedPlacementID = '';
+    let isTestMode = true; // Set to false when going live
+    
+    // Create a mock Unity Ads SDK for testing
+    const createMockUnityAds = () => {
+        window.unityAds = {
+            initialize: (gameId, testMode, listener) => {
+                setTimeout(() => {
+                    listener.onInitializationComplete();
+                }, 100);
+            },
+            load: (placementId, listener) => {
+                setTimeout(() => {
+                    listener.onPlacementContentReady(placementId);
+                }, 500);
+            },
+            show: (placementId) => {
+                // Create a visual ad overlay
+                const adOverlay = document.createElement('div');
+                adOverlay.style.cssText = `
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    background: linear-gradient(45deg, #1a1a1a, #2d2d2d) !important;
+                    z-index: 999999 !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    color: white !important;
+                    font-family: Arial, sans-serif !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    border: none !important;
+                    outline: none !important;
+                `;
+                
+                adOverlay.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 30px; text-align: center;">📺</div>
+                    <div style="font-size: 32px; margin-bottom: 20px; font-weight: bold;">AD PLAYING</div>
+                    <div style="font-size: 24px; margin-bottom: 40px; color: #ccc;">Mock Unity Ads Video</div>
+                    <div style="font-size: 18px; color: #888; margin-bottom: 30px;">Please wait while the ad plays...</div>
+                    <div style="margin-top: 20px; width: 300px; height: 8px; background: #333; border-radius: 4px; overflow: hidden; border: 2px solid #555;">
+                        <div id="ad-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A); transition: width 3s linear;"></div>
+                    </div>
+                    <div style="margin-top: 20px; font-size: 14px; color: #666;">This is a test ad simulation</div>
+                `;
+                
+                document.body.appendChild(adOverlay);
+                
+                // Start progress bar
+                setTimeout(() => {
+                    const progressBar = document.getElementById('ad-progress');
+                    if (progressBar) {
+                        progressBar.style.width = '100%';
+                    }
+                }, 100);
+                
+                // Simulate ad completion after 3 seconds
+                setTimeout(() => {
+                    // Remove overlay
+                    if (adOverlay && adOverlay.parentNode) {
+                        adOverlay.parentNode.removeChild(adOverlay);
+                    }
+                    
+                    // Find the listener and trigger completion
+                    if (window.currentAdListener) {
+                        window.currentAdListener.onPlacementContentStateChange(placementId, 'SHOW_STATE_COMPLETED');
+                    }
+                }, 3000);
+            }
+        };
+    };
+
+    // Wait for Unity Ads SDK to load or create mock
+    const waitForUnityAds = () => {
+        return new Promise((resolve, reject) => {
+            let attempts = 0;
+            const maxAttempts = 20; // 2 seconds max wait
+            
+            const checkUnityAds = () => {
+                attempts++;
+                if (typeof window.unityAds !== 'undefined') {
+                    resolve();
+                } else if (attempts >= maxAttempts) {
+                    createMockUnityAds();
+                    resolve();
+                } else {
+                    setTimeout(checkUnityAds, 100);
+                }
+            };
+            
+            checkUnityAds();
+        });
+    };
+
+    // Initialize Unity Ads when the page loads
+    const initializeUnityAds = async () => {
+        try {
+            // Wait for Unity Ads SDK to load
+            await waitForUnityAds();
+            
+            // Get Unity Ads configuration from server
+            const response = await fetch('/api/unity-ads-config');
+            const config = await response.json();
+            
+            unityGameID = config.gameId;
+            rewardedPlacementID = config.rewardedPlacementId;
+            isTestMode = config.testMode;
+            
+            if (!unityGameID || !rewardedPlacementID) {
+                return;
+            }
+            
+            // Initialize Unity Ads
+            const sdkListener = {
+                onInitializationComplete: () => {
+                    // Unity Ads ready
+                },
+                onInitializationFailed: (error, message) => {
+                    console.error('Unity Ads initialization failed');
+                },
+            };
+            
+            window.unityAds.initialize(unityGameID, isTestMode, sdkListener);
+            
+        } catch (error) {
+            console.error('Error initializing Unity Ads:', error);
+        }
+    };
+    
+    // Function to show rewarded video ad
+    const showRewardedVideo = () => {
+        if (!rewardedPlacementID) {
+            showToast('Ads are not available at the moment. Please try again later.');
+            return;
+        }
+        
+        if (typeof window.unityAds === 'undefined') {
+            showToast('Ads are not ready yet. Please wait a moment and try again.');
+            return;
+        }
+        
+        const placementListener = {
+            onPlacementContentReady: (placementId) => {
+                // Show the ad now that it's ready
+                window.unityAds.show(rewardedPlacementID);
+            },
+            onPlacementContentStateChange: (placementId, state) => {
+                if (state === 'SHOW_STATE_COMPLETED') {
+                    // Grant coins to user
+                    grantAdReward();
+                }
+            },
+            onShowFailed: (placementId, error, message) => {
+                showToast('Failed to load ad. Please try again later.');
+            },
+        };
+        
+        // Store listener globally for mock access
+        window.currentAdListener = placementListener;
+        
+        // Call the function to load the ad content
+        window.unityAds.load(rewardedPlacementID, placementListener);
+    };
+    
+    // Function to grant reward after watching ad
+    let isRewardProcessing = false;
+    const grantAdReward = async () => {
+        if (isRewardProcessing) {
+            return;
+        }
+        isRewardProcessing = true;
+        
+        try {
+            const response = await fetch('/api/watch-ad-reward', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showToast(`🎉 You earned ${result.coinsEarned} coins!`);
+                // Update balance display if on marketplace page
+                if (document.getElementById('current-balance') && window.loadUserBalance) {
+                    window.loadUserBalance();
+                }
+            } else {
+                showToast('Failed to grant reward. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error granting ad reward:', error);
+            showToast('Failed to grant reward. Please try again.');
+        } finally {
+            isRewardProcessing = false;
+        }
+    };
+    
+    // Set up watch ad button event listener
+    const watchAdButton = document.getElementById('btn-watch-ad');
+    if (watchAdButton) {
+        // Remove any existing event listeners first
+        watchAdButton.replaceWith(watchAdButton.cloneNode(true));
+        const newWatchAdButton = document.getElementById('btn-watch-ad');
+        newWatchAdButton.addEventListener('click', function() {
+            showRewardedVideo();
+        });
+    }
+    
+    // Initialize Unity Ads when page loads
+    initializeUnityAds();
+
 });
 
 </script>
 </body>
 </html>
+

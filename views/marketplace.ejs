@@ -31,6 +31,7 @@
                     <h3>Your Current Balance</h3>
                     <div class="balance-amount" id="current-balance">Loading...</div>
                     <div class="balance-amount" id="current-letter-credits">Loading...</div>
+                    <div class="balance-amount" id="current-boosts">Loading...</div>
                 </div>
             </div>
 
@@ -48,7 +49,7 @@
                             <div class="package-price">FREE</div>
                         </div>
                         <div class="package-content">
-                            <div class="coin-amount">100 Coins</div>
+                            <div class="coin-amount">50 Coins</div>
                             <p>Watch ad to earn</p>
                             <button class="btn-watch-ad" id="btn-watch-ad">
                                 <i class="fas fa-play"></i> Watch Ad
@@ -129,27 +130,102 @@
                         </div>
                     </div>
 
-                    <!-- Letter Credits Package -->
-                    <div class="package-card letter-credits-package">
+                    <!-- Ultimate Package -->
+                    <div class="package-card ultimate-package">
+                        <div class="package-badge">Best Value</div>
                         <div class="package-header">
                             <div class="package-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3>Ultimate Pack</h3>
+                            <div class="package-price">$14.99</div>
+                        </div>
+                        <div class="package-content">
+                            <div class="coin-amount">6,000 Coins</div>
+                            <p>Maximum value</p>
+                            <button class="btn-buy-package" data-package="ultimate" data-amount="6000" data-price="14.99">
+                                <i class="fas fa-shopping-cart"></i> Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Special Items -->
+            <div class="special-items-section">
+                <h2>🎁 Special Items</h2>
+                <div class="special-items-grid">
+                    <!-- Letter Credits -->
+                    <div class="special-item-card letter-credits-card">
+                        <div class="credits-info">
+                            <i class="fas fa-question-circle" id="credits-info-icon"></i>
+                            <div class="credits-tooltip" id="credits-tooltip">
+                                Letter credits allow you to send physical letters to other users. Each credit = 1 letter.
+                            </div>
+                        </div>
+                        <div class="special-item-header">
+                            <div class="special-item-icon">
                                 <i class="fas fa-envelope"></i>
                             </div>
                             <h3>Letter Credit</h3>
-                            <div class="package-price" id="letter-credits-price">$2.99</div>
-                            <div class="package-badge" id="premium-discount-badge" style="display: none;">20% OFF</div>
-                        </div>
-                        <div class="package-content">
-                            <div class="coin-amount">1 Credit</div>
-                            <p>Send physical letter</p>
-                            <div class="credits-info">
-                                <i class="fas fa-question-circle" id="credits-info-icon"></i>
-                                <div class="credits-tooltip" id="credits-tooltip">
-                                    Letter credits allow you to send physical letters to other users. Each credit = 1 letter.
-                                </div>
+                            <div class="special-item-price" id="letter-credits-price">$2.99</div>
+                            <div class="premium-discount-badge" id="premium-discount-badge" style="display: none;">
+                                <i class="fas fa-crown"></i> Premium Discount
                             </div>
-                            <button class="btn-buy-package" data-package="letter-credits" data-amount="1" data-price="2.99" data-credits="true">
+                        </div>
+                        <div class="special-item-content">
+                            <div class="special-item-amount">1 Credit</div>
+                            <p>Send physical letter</p>
+                            <button class="btn-buy-special" data-item="letter-credits" data-amount="1" data-price="2.99" data-credits="true">
                                 <i class="fas fa-shopping-cart"></i> Buy Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Boosts -->
+                    <div class="special-item-card boosts-card">
+                        <div class="boosts-info">
+                            <i class="fas fa-question-circle" id="boosts-info-icon"></i>
+                            <div class="boosts-tooltip" id="boosts-tooltip">
+                                Boosts allow you to speed up e-letter delivery time as fast as 1 hour.
+                            </div>
+                        </div>
+                        <div class="special-item-header">
+                            <div class="special-item-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3>Boost</h3>
+                            <div class="special-item-price">250 Coins</div>
+                        </div>
+                        <div class="special-item-content">
+                            <div class="special-item-amount">1 Boost</div>
+                            <p>Speed up delivery</p>
+                            <button class="btn-buy-special" data-item="boosts" data-amount="1" data-price="250" data-coins="true">
+                                <i class="fas fa-coins"></i> Buy with Coins
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Random Box -->
+                    <div class="special-item-card random-box-card">
+                        <div class="random-box-info">
+                            <i class="fas fa-question-circle" id="random-box-info-icon"></i>
+                            <div class="random-box-tooltip" id="random-box-tooltip">
+                                Get random rewards: premium skins, stamps, avatars, or bonus coins!
+                            </div>
+                        </div>
+                        <div class="special-item-header">
+                            <div class="special-item-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <h3>Random Box</h3>
+                            <div class="special-item-price">250 Coins</div>
+                        </div>
+                        <div class="special-item-content">
+                            <div class="special-item-amount">1 Box</div>
+                            <p>Random rewards</p>
+                            <button class="btn-buy-special" data-item="random-box" data-amount="1" data-price="250" data-coins="true">
+                                <i class="fas fa-coins"></i> Buy with Coins
                             </button>
                         </div>
                     </div>
@@ -252,7 +328,17 @@
                             </div>
                         </div>
                         
-                        <div class="cancel-section">
+                        <!-- Continue Subscription Section (for cancelled subscriptions) -->
+                        <div class="continue-section" id="continue-section" style="display: none;">
+                            <h4>Continue Subscription</h4>
+                            <p>Your subscription is currently cancelled and will end on <span id="access-until-date">...</span>. You can reactivate it to continue enjoying premium features.</p>
+                            <button class="btn-continue-subscription" id="btn-continue-subscription">
+                                <i class="fas fa-play"></i> Continue Subscription
+                            </button>
+                        </div>
+                        
+                        <!-- Cancel Subscription Section (for active subscriptions) -->
+                        <div class="cancel-section" id="cancel-section">
                             <h4>Cancel Subscription</h4>
                             <p>Your premium features will remain active until the end of your current billing period.</p>
                             <button class="btn-cancel-subscription" id="btn-cancel-subscription">

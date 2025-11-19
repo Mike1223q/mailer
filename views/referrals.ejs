@@ -1,0 +1,141 @@
+<%- include('header-mathes.ejs') %>
+<body>
+
+    <!-- Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Banner for Incomplete Profile -->
+    <div id="complete-profile-banner" class="d-none">
+        <div class="banner-content">
+            <h2>Complete Your Profile</h2>
+            <p>You need to complete your own profile before you can access referrals.</p>
+            <a href="/profile-settings" class="btn-complete-profile">
+                Go to Profile Settings <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="referrals-container">
+        <div class="referrals-panel">
+            <h2><i class="fas fa-users"></i> Referral Dashboard</h2>
+            
+            <!-- Referral Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="referral-count">0</h3>
+                        <p>Total Referrals</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="referral-earnings">$0.00</h3>
+                        <p>Total Earnings</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-month"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="monthly-referrals">0</h3>
+                        <p>This Month</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referral Link Section -->
+            <div class="referral-link-section">
+                <h3><i class="fas fa-share-alt"></i> Your Referral Link</h3>
+                <div class="referral-link-container">
+                    <div class="referral-code-display">
+                        <span class="code-label">Your Code:</span>
+                        <span id="referral-code" class="referral-code">Loading...</span>
+                    </div>
+                    <div class="referral-link-input-group">
+                        <input type="text" id="referral-link" class="referral-link-input" readonly>
+                        <button class="btn-copy" id="copy-link-btn">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button class="btn-share" id="share-link-btn">
+                            <i class="fas fa-share"></i> Share
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referred By Section -->
+            <div id="referred-by-section" class="referred-by-section d-none">
+                <h3><i class="fas fa-user-check"></i> You Were Referred By</h3>
+                <div class="referrer-card">
+                    <div class="referrer-info">
+                        <div class="referrer-name" id="referrer-name">Loading...</div>
+                        <div class="referrer-code">Code: <span id="referrer-code">Loading...</span></div>
+                    </div>
+                    <div class="referrer-badge">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referred Users Section -->
+            <div class="referred-users-section">
+                <h3><i class="fas fa-users"></i> Users You Referred</h3>
+                <div class="referred-users-list" id="referred-users-list">
+                    <div class="loading-referrals">
+                        <div class="loading-spinner"></div>
+                        <p>Loading your referrals...</p>
+                    </div>
+                </div>
+                
+                <div class="no-referrals" id="no-referrals" style="display: none;">
+                    <div class="no-referrals-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h4>No Referrals Yet</h4>
+                    <p>Share your referral link to start earning from referrals!</p>
+                    <button class="btn-share-now" id="share-now-btn">
+                        <i class="fas fa-share-alt"></i> Share Your Link
+                    </button>
+                </div>
+            </div>
+
+            <!-- How It Works Section -->
+            <div class="how-it-works-section">
+                <h3><i class="fas fa-question-circle"></i> How Referrals Work</h3>
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Share Your Link</h4>
+                            <p>Send your unique referral link to friends and family</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>They Join</h4>
+                            <p>When someone signs up using your link, they become your referral</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>You Earn</h4>
+                            <p>Earn a percentage from their purchases and premium subscriptions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('footer-mathes.ejs') %>
